@@ -1,4 +1,4 @@
-name: Client pull request
+name: Client pull request and push
 
 on:
   pull_request:
