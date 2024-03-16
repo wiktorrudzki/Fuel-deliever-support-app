@@ -1,0 +1,13 @@
+version: "3"
+name: "fuel-delivery-support"
+services:
+  server:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    volumes:
+      - ./:/src
+    environment:
+      - TZ=Europe/Warsaw
+    ports:
+      - "5000:5000"
