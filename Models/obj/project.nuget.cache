@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "jikkHHqNrryLXdyaWY7uV/LFme6AvkJ6edYzzze36CSRP9XRXLC9oVZzemgOecl7FVdHY5t/qR4smyClfGL64Q==",
+  "dgSpecHash": "KO9zpNyyXYhUmSpY/cRrWTLga+WBo7UxpQjuiFs80NreOeUjeuYSs+aEGP3cc/5PVXH9fDnqCpAA08SdPNxkag==",
   "success": true,
-  "projectFilePath": "C:\\Users\\danie\\source\\repos\\Fuel-deliever-support-app\\Models\\Models.csproj",
+  "projectFilePath": "C:\\Users\\danie\\source\\repos\\Fuel-deliever-support-app\\Models\\Data.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }
