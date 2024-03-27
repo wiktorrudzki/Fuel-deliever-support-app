@@ -789,6 +789,7 @@ bin
 obj
 packages
 /build/
+.wsuo
 *.suo
 *.user
 _ReSharper.*/
