@@ -1,5 +1,6 @@
 ﻿using Data.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Data
 {
@@ -12,6 +13,30 @@ namespace Data
         }
         public void SeedDataContext()
         {
+            
+            if (!_dbContext.Stations.Any())
+            {
+                var stations = new[]
+                {
+                    CreateStation("Station A"),
+                    CreateStation("Station B"),
+                    CreateStation("Station C")
+                };
+                _dbContext.Stations.AddRange(stations);
+                _dbContext.SaveChanges();
+            }
+
+            if (!_dbContext.Drivers.Any())
+            {
+                var drivers = new[]
+                {
+                    CreateDriver("John", "Station A"),
+                    CreateDriver("Alice", "Station B"),
+                    CreateDriver("Bob", "Station C")
+                };
+                _dbContext.Drivers.AddRange(drivers);
+                _dbContext.SaveChanges();
+            }
             //ClearDatabase();
             if (!_dbContext.Users.Any())
             {
@@ -23,34 +48,19 @@ namespace Data
                 };
 
                 _dbContext.Users.AddRange(users);
+                _dbContext.SaveChanges();
             }
-            if (!_dbContext.Stations.Any())
-            {
-                var stations = new[]
-                {
-                    CreateStation("Station A"),
-                    CreateStation("Station B"),
-                    CreateStation("Station C")
-                };
-                _dbContext.Stations.AddRange(stations);
-            }
-            if (!_dbContext.Drivers.Any())
-            {
-                var drivers = new[]
-                {
-                    CreateDriver("John", "Station A"),
-                    CreateDriver("Alice", "Station B"),
-                    CreateDriver("Bob", "Station C")
-                };
-                _dbContext.Drivers.AddRange(drivers);
-            }
+
+            var driversFromDb = _dbContext.Drivers.ToList();
+            var stationsFromDb = _dbContext.Stations.ToList();
+
             if (!_dbContext.Deliveries.Any())
             {
                 var deliveries = new[]
                 {
-                    CreateDelivery(1000, 1500, 800, 1200, DateTime.Now, 1, 1),
-                    CreateDelivery(1000, 1500, 800, 1200, DateTime.Now, 2, 2),
-                    CreateDelivery(1000, 1500, 800, 1200, DateTime.Now, 3, 3)
+                    CreateDelivery(1000, 1500, 800, 1200, DateTime.Now, driversFromDb[0].Id, stationsFromDb[0].Id),
+                    CreateDelivery(1000, 1500, 800, 1200, DateTime.Now, driversFromDb[1].Id, stationsFromDb[1].Id),
+                    CreateDelivery(1000, 1500, 800, 1200, DateTime.Now, driversFromDb[2].Id, stationsFromDb[2].Id)
                 };
                 _dbContext.Deliveries.AddRange(deliveries);
             }
@@ -58,9 +68,9 @@ namespace Data
             {
                 var deliveryPredictions = new[]
                 {
-                    CreateDeliveryPrediction(DateTime.Now.AddHours(3), 2000, 2500, 1800, 2200, 1, 1),
-                    CreateDeliveryPrediction(DateTime.Now.AddHours(3), 2000, 2500, 1800, 2200, 2, 2),
-                    CreateDeliveryPrediction(DateTime.Now.AddHours(3), 2000, 2500, 1800, 2200, 3, 3)
+                    CreateDeliveryPrediction(DateTime.Now.AddHours(3), 2000, 2500, 1800, 2200,  stationsFromDb[0].Id),
+                    CreateDeliveryPrediction(DateTime.Now.AddHours(3), 2000, 2500, 1800, 2200,  stationsFromDb[1].Id),
+                    CreateDeliveryPrediction(DateTime.Now.AddHours(3), 2000, 2500, 1800, 2200,  stationsFromDb[2].Id)
                 };
                 _dbContext.DeliveriesPrediction.AddRange(deliveryPredictions);
 
@@ -69,9 +79,9 @@ namespace Data
             {
                 var stationCapacities = new[]
                 {
-                    CreateStationCapacity(5000, 6000, 4000, 5500, 1),
-                    CreateStationCapacity(5000, 6000, 4000, 5500, 2),
-                    CreateStationCapacity(5000, 6000, 4000, 5500, 3)
+                    CreateStationCapacity(5000, 6000, 4000, 5500, stationsFromDb[0].Id),
+                    CreateStationCapacity(5000, 6000, 4000, 5500, stationsFromDb[1].Id),
+                    CreateStationCapacity(5000, 6000, 4000, 5500, stationsFromDb[2].Id)
                 };
                 _dbContext.StationsCapacity.AddRange(stationCapacities);
             }
@@ -79,13 +89,15 @@ namespace Data
             {
                 var currentFuelVolumes = new[]
                 {
-                    CreateCurrentFuelVolume(3000, 3500, 2500, 3200, 1),
-                    CreateCurrentFuelVolume(3000, 3500, 2500, 3200, 2),
-                    CreateCurrentFuelVolume(3000, 3500, 2500, 3200, 3)
+                    CreateCurrentFuelVolume(3000, 3500, 2500, 3200, stationsFromDb[0].Id),
+                    CreateCurrentFuelVolume(3000, 3500, 2500, 3200, stationsFromDb[1].Id),
+                    CreateCurrentFuelVolume(3000, 3500, 2500, 3200, stationsFromDb[2].Id)
                 };
                 _dbContext.CurrentFuelVolume.AddRange(currentFuelVolumes);
             }
             _dbContext.SaveChanges();
+
+            
         }
         private void ClearDatabase()
         {
@@ -114,11 +126,11 @@ namespace Data
         }
         private StationEntity CreateStation(string name)
         {
-            return new StationEntity { Name = name };
+            return new StationEntity {Name = name };
         }
         private DriverEntity CreateDriver(string name, string station)
         {
-            return new DriverEntity { Name = name, Station = station };
+            return new DriverEntity {Name = name, Station = station };
         }
 
         private DeliveryEntity CreateDelivery(int pb95, int diesel, int pb98, int turboDiesel, DateTime departureTime, int driverId, int stationId)
@@ -126,9 +138,9 @@ namespace Data
             return new DeliveryEntity { Pb95 = pb95, Diesel = diesel, Pb98 = pb98, TurboDiesel = turboDiesel, DepartureTime = departureTime, DriverId = driverId, StationId = stationId };
         }
 
-        private DeliveryPredictionEntity CreateDeliveryPrediction(DateTime departureTime, int pb95, int diesel, int pb98, int turboDiesel, int driverId, int stationId)
+        private DeliveryPredictionEntity CreateDeliveryPrediction(DateTime departureTime, int pb95, int diesel, int pb98, int turboDiesel, int stationId)
         {
-            return new DeliveryPredictionEntity { DepartureTime = departureTime, Pb95 = pb95, Diesel = diesel, Pb98 = pb98, TurboDiesel = turboDiesel, DriverId = driverId, StationId = stationId };
+            return new DeliveryPredictionEntity { DepartureTime = departureTime, Pb95 = pb95, Diesel = diesel, Pb98 = pb98, TurboDiesel = turboDiesel, StationId = stationId };
         }
 
         private StationCapacityEntity CreateStationCapacity(int pb95, int diesel, int pb98, int turboDiesel, int stationId)

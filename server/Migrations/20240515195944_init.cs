@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace server.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigrations : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -117,7 +117,6 @@ namespace server.Migrations
                     Diesel = table.Column<int>(type: "int", nullable: false),
                     Pb98 = table.Column<int>(type: "int", nullable: false),
                     TurboDiesel = table.Column<int>(type: "int", nullable: false),
-                    DriverId = table.Column<int>(type: "int", nullable: false),
                     StationId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>

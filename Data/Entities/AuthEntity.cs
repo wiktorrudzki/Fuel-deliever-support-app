@@ -8,7 +8,7 @@ namespace Data.Entities
         public int UserId { get; set; }
         public string? Login { get; set; }
         public string? Password { get; set; }
-        public UserEntity User { get; set; }
+        public  UserEntity User { get; set; }
 
     }
 }
