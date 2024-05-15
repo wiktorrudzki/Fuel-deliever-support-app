@@ -122,9 +122,6 @@ namespace server.Migrations
                     b.Property<int>("Diesel")
                         .HasColumnType("int");
 
-                    b.Property<int>("DriverId")
-                        .HasColumnType("int");
-
                     b.Property<int>("Pb95")
                         .HasColumnType("int");
 

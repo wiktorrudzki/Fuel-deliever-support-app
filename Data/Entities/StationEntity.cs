@@ -1,7 +1,10 @@
-﻿namespace Data.Entities
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Data.Entities
 {
     public class StationEntity
     {
+        
         public int Id { get; set; }
         public string? Name { get; set; }
         public List<DeliveryEntity>? Deliveries { get; set; }

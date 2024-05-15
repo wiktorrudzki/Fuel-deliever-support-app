@@ -10,13 +10,10 @@ namespace Data.Entities
         public int Pb98 { get; set; }
         public int TurboDiesel { get; set; }
         public DateTime DepartureTime { get; set; }
-        
-        [ForeignKey("DriverId")]
-        public DriverEntity? Driver { get; set; }
         public int DriverId { get; set; }
-
-        [ForeignKey("StationId")]
-        public StationEntity? Station { get; set; }
         public int StationId { get; set; }
+        public DriverEntity? Driver { get; set; }
+        public StationEntity? Station { get; set; }
+        
     }
 }

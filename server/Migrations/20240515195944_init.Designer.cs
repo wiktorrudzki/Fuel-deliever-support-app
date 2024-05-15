@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240504191345_InitialMigrations")]
-    partial class InitialMigrations
+    [Migration("20240515195944_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -123,9 +123,6 @@ namespace server.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int>("Diesel")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DriverId")
                         .HasColumnType("int");
 
                     b.Property<int>("Pb95")

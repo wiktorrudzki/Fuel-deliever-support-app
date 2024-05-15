@@ -18,14 +18,16 @@ namespace Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            
+            CreateStations(modelBuilder);
+            CreateDrivers(modelBuilder);
             CreateUsers(modelBuilder);
             //CreateAuths(modelBuilder);
             CreateCurrentFuelVolume(modelBuilder);
             CreateDeliveries(modelBuilder);
             CreateDeliveryPredictions(modelBuilder);
-            CreateDrivers(modelBuilder);
             CreateStationsCapacity(modelBuilder);
-            CreateStations(modelBuilder);
+           
         }
 
         private static void CreateUsers(ModelBuilder modelBuilder)
@@ -70,16 +72,18 @@ namespace Data
 
         private static void CreateDrivers(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<DeliveryPredictionEntity>(e =>
+            modelBuilder.Entity<DriverEntity>(e =>
             {
+
                 e.Property(d => d.Id)
-                    .ValueGeneratedOnAdd();
+                .UseIdentityColumn();
             });
+            
         }
 
         private static void CreateStationsCapacity(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<DeliveryPredictionEntity>(e =>
+            modelBuilder.Entity<StationCapacityEntity>(e =>
             {
                 e.Property(s => s.Id)
                     .ValueGeneratedOnAdd();
@@ -88,10 +92,9 @@ namespace Data
 
         private static void CreateStations(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<DeliveryPredictionEntity>(e =>
+            modelBuilder.Entity<StationEntity>(e =>
             {
-                e.Property(s => s.Id)
-                    .ValueGeneratedOnAdd();
+                e.Property(s => s.Id).UseIdentityColumn();
             });
         }
 
