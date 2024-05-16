@@ -17,10 +17,15 @@ namespace server.Controllers
         }
 
         [HttpGet]
-        [Route("GetAsync")]
-        public async Task<IActionResult> GetAsync(int id)
+        [Route("GetUserById")]
+        public async Task<IActionResult> GetUserById(int id)
         {
             var userDto = await _userService.GetUserAsync(id);
+
+            if (userDto == null)
+            {
+                throw new NotFound404Exception("No user by given Id");
+            }
 
             return Ok(userDto);
         }
