@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Data.Models;
+using Microsoft.AspNetCore.Mvc;
+using server.Exceptions;
 using server.Services.Interfaces;
 
 namespace server.Controllers
@@ -20,7 +22,24 @@ namespace server.Controllers
         {
             var userDto = await _userService.GetUserAsync(id);
 
-            return StatusCode(StatusCodes.Status200OK, userDto);
+            return Ok(userDto);
+        }
+
+        [HttpPost]
+        [Route("CreateUser")]
+        public async Task<IActionResult> CreateUser(UserDto userDto)
+        {
+            if (userDto == null)
+            {
+                throw new BadRequest400Exception("User data cannot be null");
+            }
+
+            if (!await _userService.CreateUserAsync(userDto))
+            {
+                throw new InternalServerError500Exception("Something went wrong while saving");
+            }
+
+            return Ok("Successfully created");
         }
     }
 }

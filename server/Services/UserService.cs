@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Data;
+using Data.Entities;
 using Data.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using server.Services.Interfaces;
 
@@ -17,9 +19,12 @@ namespace server.Services
             _mapper = mapper;
         }
 
-        public Task<UserDto> CreateUserAsync(UserDto userDto)
+        public async Task<bool> CreateUserAsync(UserDto userDto)
         {
-            throw new NotImplementedException();
+            var userEntity = _mapper.Map<UserEntity>(userDto);
+            await _dbContext.AddAsync(userEntity);
+            
+            return await Save();
         }
 
         public async Task<UserDto> GetUserAsync(int id)
@@ -30,6 +35,12 @@ namespace server.Services
                 .FirstOrDefaultAsync(u => u.Id == id);
             var userDto = _mapper.Map<UserDto>(user);
             return userDto;
+        }
+
+        public async Task<bool> Save()
+        {
+            var saved = await _dbContext.SaveChangesAsync();
+            return saved > 0 ? true : false;
         }
     }
 }
