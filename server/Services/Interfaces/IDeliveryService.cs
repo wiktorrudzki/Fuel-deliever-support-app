@@ -6,9 +6,9 @@ namespace server.Services.Interfaces
     {
         Task<DeliveryDto> GetDeliveryAsync(int id);
         Task<IEnumerable<DeliveryDto>> GetAllDeliveriesAsync();
-        Task<DeliveryDto> UpdateDeliveryAsync(DeliveryDto delivery);
-        Task<DeliveryDto> CreateDeliveryAsync(DeliveryDto delivery);
-        Task<DeliveryDto> DeleteDeliveryAsync(int id);
+        Task<bool> UpdateDeliveryAsync(DeliveryDto delivery);
+        Task<bool> CreateDeliveryAsync(DeliveryDto delivery);
+        Task<bool> DeleteDeliveryAsync(int id);
 
     }
 }

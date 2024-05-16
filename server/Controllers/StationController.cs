@@ -20,23 +20,23 @@ namespace server.Controllers
         [Route("GetAllStations")]
         public async Task<IActionResult> GetAllStations()
         {
-            var stationDto = await _stationService.GetAllStationsAsync();
+            var stations = await _stationService.GetAllStationsAsync();
 
-            return Ok(stationDto);
+            return Ok(stations);
         }
 
         [HttpGet]
         [Route("GetStationById")]
         public async Task<IActionResult> GetStationById(int id)
         {
-            var stationDto = await _stationService.GetStationAsync(id);
+            var station = await _stationService.GetStationAsync(id);
 
-            if (stationDto == null)
+            if (station == null)
             {
                 throw new NotFound404Exception("No station by given Id");
             }
 
-            return Ok(stationDto);
+            return Ok(station);
         }
 
     }

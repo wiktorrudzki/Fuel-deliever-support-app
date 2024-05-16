@@ -13,7 +13,7 @@ namespace Data
         }
         public void SeedDataContext()
         {
-            
+            //ClearDatabase();
             if (!_dbContext.Stations.Any())
             {
                 var stations = new[]
@@ -37,7 +37,7 @@ namespace Data
                 _dbContext.Drivers.AddRange(drivers);
                 _dbContext.SaveChanges();
             }
-            //ClearDatabase();
+            
             if (!_dbContext.Users.Any())
             {
                 var users = new List<UserEntity>

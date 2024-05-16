@@ -33,7 +33,9 @@ namespace server.Services
             var station = await _dbContext.Stations
                 .AsNoTracking()
                 .FirstOrDefaultAsync(u => u.Id == id);
+
             var stationDto = _mapper.Map<StationDto>(station);
+
             return stationDto;
         }
     }
