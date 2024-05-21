@@ -65,7 +65,7 @@ export default function FuelLevelChart (){
     },
     stroke: {
       show: true,
-      colors: ['#000'], 
+      colors: ['black'], 
       width: 4,
     },
     tooltip: {
@@ -77,13 +77,13 @@ export default function FuelLevelChart (){
   const series = [
     {
       name: 'Fuel Level',
-      data: [40],
+      data: [90],
     },
   ];
 
   return (
     <div style={{ width: '100px' }}>
-      <ReactApexChart options={options} series={series} type="bar" height={200} />
+      <ReactApexChart options={options} series={series} type="bar" height={260} />
     </div>
   );
 };

@@ -1,11 +1,11 @@
 import Card from '@mui/material/Card';
 import ReactApexChart from 'react-apexcharts';
-import { useState } from 'react';
+// import { useState } from 'react';
 import './charts.css';
 
 export default function Station1chart() {
 
-    const [state, setState] = useState({
+    const state = {
         series: [{
             name: 'Fuels',
             data: [10, 30, 57, 20]
@@ -67,7 +67,7 @@ export default function Station1chart() {
                 }
             }
         }
-    });
+    };
 
     return (
         <Card sx={{ width: '400px', padding: '10px'}}>
