@@ -56,4 +56,7 @@ main {
   .password-input {
     padding-bottom: 100px;
   }
+  .login-form {
+    gap: 30px;
+  }
 }
