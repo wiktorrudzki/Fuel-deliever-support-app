@@ -1,7 +1,7 @@
 // project imports
-import addressIcon from './icons/fa6-regular_address-card.svg';
-import mapIcon from './icons/gg_pin.svg';
-import phoneIcon from './icons/ic_baseline-phone.svg';
+import addressIcon from './icons/address_icon.svg';
+import mapIcon from './icons/map_icon.svg';
+import phoneIcon from './icons/phone_icon.svg';
 import './style.css';
 
 const Card = () => {
