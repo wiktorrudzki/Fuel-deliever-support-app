@@ -86,11 +86,7 @@ const Table = <T extends string, K extends string>({
     >
       <thead>
         <tr>
-          {extend && (
-            <th>
-              <EmptyColumn />
-            </th>
-          )}
+          {extend && <th></th>}
 
           {columns.map((column) => (
             <th key={column}>{column.toUpperCase()}</th>
@@ -100,7 +96,7 @@ const Table = <T extends string, K extends string>({
       <tbody>
         {rows.map((row, index) => (
           <>
-            <tr key={index}>
+            <tr key={row.id + index.toString()}>
               {extend && (
                 <td
                   className="extender"
