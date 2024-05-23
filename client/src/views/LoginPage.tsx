@@ -4,7 +4,6 @@ import { useState } from 'react';
 import VisibilityOff from '@mui/icons-material/VisibilityOffOutlined';
 import Visibility from '@mui/icons-material/VisibilityOutlined';
 import {
-  Button,
   FormControl,
   FormHelperText,
   IconButton,
@@ -14,6 +13,7 @@ import {
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
+import { PrimaryButton } from '@/components/button';
 // project imports
 import mainLogo from '@/icons/mainLogo.svg';
 
@@ -131,15 +131,7 @@ const LoginPage = () => {
                     )}
                   </FormControl>
                 </div>
-                <Button
-                  className="button-sign-in"
-                  size="large"
-                  variant="contained"
-                  type="submit"
-                  style={{ borderRadius: 10, marginTop: 30, height: 50 }}
-                >
-                  Zaloguj się
-                </Button>
+                <PrimaryButton text="Zaloguj się" type="submit" />
               </div>
               <p className="forgot-text">Zapomniałeś(-aś) hasła?</p>
             </main>
