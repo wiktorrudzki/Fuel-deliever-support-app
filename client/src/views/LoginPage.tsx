@@ -13,7 +13,7 @@ import {
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
-import { PrimaryButton } from '@/components/button';
+import { PrimaryButton } from '@/components/Button';
 // project imports
 import mainLogo from '@/icons/mainLogo.svg';
 
