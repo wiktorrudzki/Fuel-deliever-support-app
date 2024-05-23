@@ -1,0 +1,34 @@
+table {
+  --border: 1px solid var(--grey);
+
+  border-radius: 10px;
+  border: var(--border);
+  background-color: white;
+
+  border-spacing: 0;
+  border-collapse: separate;
+  overflow: hidden;
+}
+
+th {
+  background-color: var(--grey);
+}
+
+td,
+th {
+  text-align: center;
+  padding: 8px;
+}
+
+table tr:not(:last-child) > td,
+table tr:not(:last-child) > th {
+  border-bottom: var(--border);
+}
+
+.extender {
+  cursor: pointer;
+}
+
+.extended-row-head {
+  font-weight: 700;
+}
