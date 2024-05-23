@@ -1,0 +1,9 @@
+version: "3"
+name: "fuel-delivery-support"
+services:
+  db:
+    build:
+      context: .
+      dockerfile: Dockerfile.db.dev
+    ports:
+      - "1433:1433"
