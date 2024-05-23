@@ -15,8 +15,9 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 
 // project imports
-import mainLogo from './mainLogo.svg';
-import './style.css';
+import mainLogo from '@/icons/mainLogo.svg';
+
+import './LoginPage.css';
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);

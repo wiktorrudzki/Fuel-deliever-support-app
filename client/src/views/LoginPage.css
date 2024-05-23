@@ -8,7 +8,7 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background-color: #ffffff;
+  background-color: var(--white);
 }
 
 nav {
@@ -39,20 +39,37 @@ main {
   flex-direction: column;
   gap: 10px;
   margin-bottom: 20px;
+  width: 20%;
+}
+
+.password-input > div,
+.email-input > div {
+  width: 100%;
 }
 
 .custom-input .MuiOutlinedInput-root {
-  width: 400px;
   border-radius: 10px;
   height: 50px;
 }
 
 .forgot-text {
-  color: #b3b3b3;
+  color: var(--grey);
   cursor: pointer;
 }
 
+@media (max-width: 1234px) {
+  .login-form {
+    width: 33%;
+  }
+}
+
 @media (max-width: 768px) {
+  main {
+    padding: 0 20px;
+  }
+  .login-form {
+    width: 100%;
+  }
   .password-input {
     padding-bottom: 100px;
   }

@@ -1,7 +1,8 @@
 // import { Button } from '@/components/button';
 // import { TextInput } from '@/components/input';
+import { LoginPage } from '@/views';
+
 import './App.css';
-import { LoginPage } from './components/loginPage';
 
 function App() {
   return (
