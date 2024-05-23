@@ -6,5 +6,7 @@ namespace server.Services.Interfaces
     {
         Task<DriverDto> GetDriverAsync(int id);
         Task<IEnumerable<DriverDto>> GetAllDriversAsync();
+
+        
     }
 }
