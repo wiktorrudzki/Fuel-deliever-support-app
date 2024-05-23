@@ -3,7 +3,6 @@ import { CSSProperties, useState } from 'react';
 import ArrowDownIcon from '@/icons/arrow-down.svg';
 import ArrowRightIcon from '@/icons/arrow-right.svg';
 
-import { LoadingSpinner } from '../LoadingSpinner';
 import './Table.css';
 
 type WithId = {
