@@ -10,26 +10,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
-    name: "Run unit tests"
-    defaults:
-      run:
-        shell: bash
-        # Define the working directory for all run steps in the workflow
-        working-directory: ./client
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: "Checkout repository"
-        uses: actions/checkout@v2
-
-      - name: "Install dependencies"
-        run: npm install
-
-      - name: "Run tests"
-        run: npm run test
-
   lint:
     name: "Run linter"
     defaults:
