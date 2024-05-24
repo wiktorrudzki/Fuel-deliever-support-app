@@ -1,9 +1,10 @@
 import { Button } from '@/components/button';
 import { TextInput } from '@/components/input';
-import Station1chart from './components/charts/Station1chart';
-import TableDetails from './components/tableDetails/TableDetails';
+
 import './App.css';
-import FuelLevelCard from './components/FuelLevel/FuelLevelCard';
+import MobileCalendar from './components/Calendar/MobileCalendar';
+import Station1chart from './components/Charts/Station1chart';
+import FuelLevelCard from './components/FuelLevel';
 
 function App() {
   return (
@@ -11,9 +12,8 @@ function App() {
       <Button />
       <TextInput />
       <Station1chart />
-      <TableDetails />
       <FuelLevelCard />
-
+      <MobileCalendar />
     </div>
   );
 }

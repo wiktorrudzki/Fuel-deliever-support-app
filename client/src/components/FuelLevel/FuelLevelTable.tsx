@@ -5,7 +5,7 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableRow from '@mui/material/TableRow';
 
-import './fuelLevelCard.css';
+import './FuelLevelCard.css';
 
 function createData(name: string, value: string) {
   return { name, value };
@@ -20,7 +20,7 @@ const rows = [
 
 export default function FuelLevelTable() {
   return (
-    <div style={{width: '300px', height: '200px', marginTop: '30px', marginBottom: '30px'}}>
+    <div style={{width: '300px', height: '120px', marginTop: '30px', marginBottom: '30px' }}>
       <TableContainer component={Paper} className="tableContainer">
         <Table
           sx={{ minWidth: 200, borderCollapse: 'collapse' }}

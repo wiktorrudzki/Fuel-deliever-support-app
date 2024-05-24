@@ -1,0 +1,10 @@
+.calendar-container {
+  width: 500px;
+  height: 500px;
+  color: black;
+  background-color: rgb(255, 3, 3);
+}
+.fuel-icon{
+  color: rgb(70, 70, 70);
+  font-size: 20px;
+}

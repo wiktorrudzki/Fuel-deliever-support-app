@@ -12,7 +12,7 @@ export default function FuelLevelChart (){
     plotOptions: {
       bar: {
         horizontal: false,
-        borderRadius: 4,
+        borderRadius: 10,
         dataLabels: {
           position: 'top', 
         },
@@ -20,15 +20,15 @@ export default function FuelLevelChart (){
             ranges: [{
                 from: 0,
                 to: 20,
-                color: 'rgb(185, 5, 5)'
+                color: '#FF3434'
             }, {
                 from: 20,
                 to: 50,
-                color: 'rgb(232, 232, 0)'
+                color: '#ECEC42'
             }, {
                 from: 50,
                 to: 100,
-                color: 'rgb(0, 147, 7)'
+                color: '#008000'
             }]
         }
       },

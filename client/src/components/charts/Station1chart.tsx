@@ -25,15 +25,15 @@ export default function Station1chart() {
                         ranges: [{
                             from: 0,
                             to: 20,
-                            color: 'rgb(185, 5, 5)'
+                            color: '#FF3434'
                         }, {
                             from: 20,
                             to: 50,
-                            color: 'rgb(232, 232, 0)'
+                            color: '#ECEC42'
                         }, {
                             from: 50,
                             to: 100,
-                            color: 'rgb(0, 147, 7)'
+                            color: '#008000'
                         }]
                     }
                 },
@@ -70,21 +70,21 @@ export default function Station1chart() {
     };
 
     return (
-        <Card sx={{ width: '400px', padding: '10px'}}>
+        <Card className='card'>
             <div id="chart">
                 <ReactApexChart options={state.options} series={state.series} type="bar" height={200} />
             </div>
-            <div id="custom-legend" style={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', margin: '0 10px' }}>
-                    <div className='legend' style={{ backgroundColor: 'rgb(185, 5, 5)' }}></div>
+            <div id="custom-legend">
+                <div className='element'>                   
+                    <div className='legend' style={{ backgroundColor: '#FF3434' }}></div>
                     <span>niski</span>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', margin: '0 10px' }}>
-                    <div className='legend' style={{ backgroundColor: 'rgb(232, 232, 0)' }}></div>
+                <div className='element'>
+                    <div className='legend' style={{ backgroundColor: '#ECEC42' }}></div>
                     <span>średni</span>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', margin: '0 10px' }}>
-                    <div className='legend' style={{ backgroundColor: 'rgb(0, 147, 7)' }}></div>
+                <div className='element'>
+                    <div className='legend' style={{ backgroundColor: '#008000' }}></div>
                     <span>wysoki</span>
                 </div>
             </div>
