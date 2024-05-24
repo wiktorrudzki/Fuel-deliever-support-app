@@ -1,0 +1,24 @@
+.legend{
+    width: 12px; 
+    height: 12px; 
+    margin-right: 5px;
+}
+#chart{
+    margin: 0;
+    padding: 0;
+}
+.card{
+    margin: 0;
+    padding: 0;
+    width: 400px;
+}
+#custom-legend{
+    display: flex;
+    justify-content: center;
+    padding-bottom: 10px;
+}
+.element{
+    display: flex; 
+    align-items: center; 
+    margin: 0 10px; 
+}
