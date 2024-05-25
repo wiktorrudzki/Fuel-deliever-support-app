@@ -11,7 +11,6 @@ export type UserCredentials = {
 };
 
 export type Login = {
-  token: string;
   isAuth: boolean;
   user: User;
 };

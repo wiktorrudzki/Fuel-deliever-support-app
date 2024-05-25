@@ -32,9 +32,8 @@ const LoginPage = () => {
 
   const [submit, isLoading] = usePromise(
     login,
-    ({ isAuth, token, user }) => {
+    ({ isAuth, user }) => {
       if (isAuth) {
-        localStorage.setItem('token', token);
         setUser(user);
       } else {
         console.error('not authenticated'); //todo handle rejection
