@@ -56,7 +56,7 @@ const LoginPage = () => {
         touched,
         values,
       }) => (
-        <form noValidate onSubmit={handleSubmit}>
+        <form className="form" noValidate onSubmit={handleSubmit}>
           <div className="container">
             <nav>
               <img src={mainLogo} alt="main_logo" className="main-logo" />

@@ -1,43 +1,43 @@
-.sidebar-conatainer{
-   background-color: rgb(255, 255, 255);
-   border-right: 1px solid #B3B3B3;
-   width: 400px;
-   height: 100vh;
-   margin-left: 0;
+.sidebar-conatainer {
+  background-color: rgb(255, 255, 255);
+  border-right: 1px solid #b3b3b3;
+  padding: 20px;
+  height: 100%;
+  margin-left: 0;
 }
-.logo-container{
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.stations-conatiner{
-    margin-top: 60px;
-    margin-bottom: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
+.stations-conatiner {
+  margin-top: 60px;
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
-.buttons2-conatiner{
-    margin-top: 30px;
-    margin-bottom: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
+.buttons2-conatiner {
+  margin-top: 30px;
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
-.sidebar-icon{
-    margin-right: 5px;
+.sidebar-icon {
+  margin-right: 5px;
 }
-.buttons3-conatiner{
-    margin-top: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-direction: column;
+.buttons3-conatiner {
+  margin-top: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: column;
 }
-.sidebar-button-group{
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+.sidebar-button-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
