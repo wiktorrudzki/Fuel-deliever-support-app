@@ -1,4 +1,5 @@
 ﻿using Data.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using server.Exceptions;
 using server.Services.Interfaces;
@@ -17,6 +18,7 @@ namespace server.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("GetAllStations")]
         public async Task<IActionResult> GetAllStations()
         {
@@ -26,6 +28,7 @@ namespace server.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("GetStationById")]
         public async Task<IActionResult> GetStationById(int id)
         {

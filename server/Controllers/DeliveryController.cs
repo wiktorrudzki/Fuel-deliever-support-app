@@ -1,4 +1,5 @@
 ﻿using Data.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using server.Exceptions;
 using server.Services;
@@ -18,6 +19,7 @@ namespace server.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("GetAllDeliveries")]
         public async Task<IActionResult> GetAllDeliveries()
         {
@@ -27,6 +29,7 @@ namespace server.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("GetDeliveryById")]
         public async Task<IActionResult> GetDeliveryById(int id)
         {
@@ -41,6 +44,7 @@ namespace server.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         [Route("UpdateDelivery")]
         public async Task<IActionResult> UpdateDelivery(DeliveryDto deliveryDto)
         {
@@ -63,6 +67,7 @@ namespace server.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [Route("CreateDelivery")]
         public async Task<IActionResult> CreateDelivery(DeliveryDto deliveryDto)
         {
@@ -80,6 +85,7 @@ namespace server.Controllers
         }
 
         [HttpDelete]
+        [Authorize]
         [Route("DeleteDelivery")]
         public async Task<IActionResult> DeleteDelivery(int id)
         {

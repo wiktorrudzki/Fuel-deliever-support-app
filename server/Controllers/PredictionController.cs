@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using server.Services.Interfaces;
 
 namespace server.Controllers
@@ -15,6 +16,7 @@ namespace server.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("GetAllPredictions")]
         public async Task<IActionResult> GetAllPredictions()
         {

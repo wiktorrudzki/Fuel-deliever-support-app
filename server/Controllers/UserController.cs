@@ -1,4 +1,5 @@
 ﻿using Data.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using server.Exceptions;
 using server.Services.Interfaces;
@@ -17,6 +18,7 @@ namespace server.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("GetUserById")]
         public async Task<IActionResult> GetUserById(int id)
         {
@@ -31,6 +33,7 @@ namespace server.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [Route("CreateUser")]
         public async Task<IActionResult> CreateUser(UserDto userDto)
         {
