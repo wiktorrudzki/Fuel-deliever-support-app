@@ -14,6 +14,8 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 
 import { PrimaryButton } from '@/components/Button';
+import { login } from '@/dao/auth';
+import { usePromise, useUser } from '@/hooks';
 // project imports
 import mainLogo from '@/icons/mainLogo.svg';
 
@@ -22,9 +24,26 @@ import './LoginPage.css';
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
 
+  const { setUser } = useUser();
+
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
+
+  const [submit, isLoading] = usePromise(
+    login,
+    ({ isAuth, token, user }) => {
+      if (isAuth) {
+        localStorage.setItem('token', token);
+        setUser(user);
+      } else {
+        console.error('not authenticated'); //todo handle rejection
+      }
+    },
+    (error) => {
+      console.error(error); //todo handle rejection
+    }
+  );
 
   const handleMouseDownPassword = (
     event: React.MouseEvent<HTMLButtonElement>
@@ -35,18 +54,16 @@ const LoginPage = () => {
   return (
     <Formik
       initialValues={{
-        email: '',
+        login: '',
         password: '',
       }}
       validationSchema={Yup.object().shape({
-        email: Yup.string()
+        login: Yup.string()
           .email('Must be a valid email')
           .required('Email is required'),
         password: Yup.string().required('Password is required'),
       })}
-      onSubmit={() => {
-        console.log('Zostałeś zalogowany');
-      }}
+      onSubmit={submit}
     >
       {({
         errors,
@@ -64,13 +81,13 @@ const LoginPage = () => {
             <main>
               <div className="login-form">
                 <div className="email-input">
-                  <FormControl error={Boolean(touched.email && errors.email)}>
+                  <FormControl error={Boolean(touched.login && errors.login)}>
                     <TextField
                       id="email-login"
                       type="email"
                       label="Email"
-                      name="email"
-                      value={values.email}
+                      name="login"
+                      value={values.login}
                       onBlur={handleBlur}
                       onChange={handleChange}
                       className="email-input custom-input"
@@ -78,9 +95,9 @@ const LoginPage = () => {
                         style: { color: '#B3B3B3' },
                       }}
                     />
-                    {touched.email && errors.email && (
+                    {touched.login && errors.login && (
                       <FormHelperText error id="email-helper">
-                        {errors.email}
+                        {errors.login}
                       </FormHelperText>
                     )}
                   </FormControl>
@@ -131,7 +148,11 @@ const LoginPage = () => {
                     )}
                   </FormControl>
                 </div>
-                <PrimaryButton text="Zaloguj się" type="submit" />
+                <PrimaryButton
+                  disabled={isLoading}
+                  text="Zaloguj się"
+                  type="submit"
+                />
               </div>
               <p className="forgot-text">Zapomniałeś(-aś) hasła?</p>
             </main>
