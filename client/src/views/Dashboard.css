@@ -1,0 +1,22 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.data-side {
+  width: 100%;
+}
+
+.dashboard-header {
+  background-color: #272727;
+  color: var(--white);
+  width: 100%;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.3);
+}
+
+.dashboard-title {
+  padding: 15px 0 15px 50px;
+  font-weight: 700;
+  font-size: 40px;
+}

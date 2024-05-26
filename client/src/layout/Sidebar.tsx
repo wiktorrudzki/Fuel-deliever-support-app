@@ -1,4 +1,6 @@
 // import { useState } from "react";
+import { Link } from 'react-router-dom';
+
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import { Box, Button, Divider } from '@mui/material';
@@ -19,7 +21,7 @@ export default function Sidebar() {
     borderRadius: '5px',
     '&:hover': {
       backgroundColor: '#B3B3B3',
-      color: 'white'
+      color: 'white',
     },
   });
   // const [isCollapsed, setIsCollapsed] = useState(false);
@@ -29,8 +31,12 @@ export default function Sidebar() {
         <img src={mainLogo} alt="Main Logo" className="main-logo" />
       </Box>
       <Box className="stations-conatiner">
-        <Button sx={buttonStyles}>Stacja nr 1</Button>
-        <Button sx={buttonStyles}>Stacja nr 2</Button>
+        <Button sx={buttonStyles} component={Link} to="/dashboard">
+          Stacja nr 1
+        </Button>
+        <Button sx={buttonStyles} component={Link} to="/dashboard/order">
+          Stacja nr 2
+        </Button>
       </Box>
       <Divider sx={{ borderTop: '2px solid #B3B3B3' }} />
       <Box className="sidebar-button-group">
@@ -43,14 +49,8 @@ export default function Sidebar() {
           </Button>
         </Box>
         <Box className="buttons3-conatiner">
-          <Button sx={{...buttonStyles(), border: 'none'}}>
-            O nas
-          </Button>
-          <Button sx={{...buttonStyles(), border: 'none'}}>
-            Kontakt
-          </Button>
-          <Button sx={{...buttonStyles(), border: 'none'}}>
-            Wyloguj się 
+          <Button sx={{ ...buttonStyles(), border: 'none' }}>
+            Wyloguj się
           </Button>
         </Box>
       </Box>

@@ -5,6 +5,7 @@ import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { PickersDay, PickersDayProps } from '@mui/x-date-pickers/PickersDay';
 import dayjs, { Dayjs } from 'dayjs';
+
 import './MobileCalendar.css';
 
 const initialValue = dayjs();
@@ -26,7 +27,9 @@ function CustomDay(props: CustomDayProps) {
     <Badge
       key={day.toString()}
       overlap="circular"
-      badgeContent={isSelected ? <LocalGasStationIcon className='fuel-icon'/> : undefined}
+      badgeContent={
+        isSelected ? <LocalGasStationIcon className="fuel-icon" /> : undefined
+      }
     >
       <PickersDay
         {...other}
@@ -37,7 +40,7 @@ function CustomDay(props: CustomDayProps) {
   );
 }
 
-export default function SimpleDateCalendar() {
+export default function MobileCalendar() {
   const highlightedDates = [
     dayjs('2024-05-29'),
     dayjs('2024-05-26'),
@@ -46,7 +49,7 @@ export default function SimpleDateCalendar() {
   ];
 
   return (
-    <div className='calendar-container'>
+    <div className="calendar-container">
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DateCalendar
           defaultValue={initialValue}
