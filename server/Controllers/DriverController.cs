@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using server.Services.Interfaces;
 
@@ -13,7 +14,9 @@ namespace server.Controllers
         {
             _driverService = driverService;
         }
+
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAllDrivers()
         {
             var drivers = await _driverService.GetAllDriversAsync();
@@ -23,6 +26,7 @@ namespace server.Controllers
 
         [HttpGet]
         [Route("{id}")]
+        [Authorize]
         public async Task<IActionResult> GetDriverById(int id)
         {
             var driver = await _driverService.GetDriverAsync(id);
