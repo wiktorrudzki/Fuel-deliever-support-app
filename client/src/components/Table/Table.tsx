@@ -81,7 +81,7 @@ const Table = <T extends string, K extends string>({
   };
 
   return (
-    <LoadingOverlay isLoading={true}>
+    <LoadingOverlay isLoading={false}>
       <table
         width={width}
         style={{ tableLayout: extend ? 'initial' : 'fixed', ...style }}

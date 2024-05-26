@@ -10,6 +10,7 @@ import { Table } from '@/components/Table';
 import './App.css';
 import { LoginPage } from './views';
 import Dashboard from './views/Dashboard';
+import Panel from './views/Panel';
 
 function App() {
   return (
@@ -72,7 +73,7 @@ function App() {
         />
         <Route path="/old-about" element={<Navigate to="/about" replace />} />
         <Route path="/dashboard" element={<Dashboard />}>
-          <Route index element={<h1>Hello</h1>} />
+          <Route index element={<Panel />} />
           <Route path="order" element={<h1>Order</h1>} />
         </Route>
       </Routes>
