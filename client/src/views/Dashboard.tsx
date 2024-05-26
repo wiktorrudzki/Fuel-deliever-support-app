@@ -13,7 +13,9 @@ export default function Dashboard() {
         <div className="dashboard-header">
           <h1 className="dashboard-title">PANEL</h1>
         </div>
-        <Outlet />
+        <div className="dashboard-outlet">
+          <Outlet />
+        </div>
       </div>
     </div>
   );
