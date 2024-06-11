@@ -32,7 +32,7 @@ const Table = <T extends string, K extends string>({
   extend,
   extendedColumns,
   extendedRows,
-  width,
+  width = '100%',
   style,
 }: Props<T, K>) => {
   const [expandedRows, setExpandedRows] = useState<(Data<K> & WithId)[]>([]);
@@ -81,7 +81,7 @@ const Table = <T extends string, K extends string>({
   };
 
   return (
-    <LoadingOverlay isLoading={true}>
+    <LoadingOverlay isLoading={false}>
       <table
         width={width}
         style={{ tableLayout: extend ? 'initial' : 'fixed', ...style }}

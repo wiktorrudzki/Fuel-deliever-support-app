@@ -20,7 +20,7 @@ export default function Sidebar() {
     height: '40px',
     borderRadius: '5px',
     '&:hover': {
-      backgroundColor: '#B3B3B3',
+      backgroundColor: 'black',
       color: 'white',
     },
   });
@@ -44,7 +44,7 @@ export default function Sidebar() {
           <Button sx={buttonStyles}>
             <CalendarMonthIcon className="sidebar-icon" /> Terminarz
           </Button>
-          <Button sx={buttonStyles}>
+          <Button sx={buttonStyles} component={Link} to="/dashboard/deliveryDetails">
             <LocalShippingIcon className="sidebar-icon" /> Dodaj dostawę{' '}
           </Button>
         </Box>
