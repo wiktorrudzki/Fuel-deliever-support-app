@@ -11,6 +11,7 @@ import './App.css';
 import { LoginPage } from './views';
 import Dashboard from './views/Dashboard';
 import DeliveryDetails from './views/DeliveryDetails';
+import Panel from './views/Panel';
 
 function App() {
   return (
@@ -75,6 +76,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />}>
           <Route index element={<h1>Hello</h1>} />
           <Route path="deliveryDetails" element={<DeliveryDetails />} />
+          <Route index element={<Panel />} />
           <Route path="order" element={<h1>Order</h1>} />
         </Route>
       </Routes>

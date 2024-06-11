@@ -10,7 +10,7 @@ import './Sidebar.css';
 
 export default function Sidebar() {
   const buttonStyles = () => ({
-    margin: '10px',
+    margin: '10px 25px',
     color: 'black',
     border: '1px solid #B3B3B3',
     padding: '10px 20px',

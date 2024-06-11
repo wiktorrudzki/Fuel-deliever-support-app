@@ -57,7 +57,7 @@ const LoginPage = () => {
         values,
       }) => (
         <form noValidate onSubmit={handleSubmit}>
-          <div className="container">
+          <div className="login-container">
             <nav>
               <img src={mainLogo} alt="main_logo" className="main-logo" />
             </nav>

@@ -4,7 +4,7 @@
   padding: 0;
 }
 
-.container {
+.login-container {
   display: flex;
   flex-direction: column;
   height: 100vh;
