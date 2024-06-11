@@ -2,9 +2,10 @@ import { Grid, Box, Button } from '@mui/material';
 
 // import { styled } from '@mui/material/styles';
 import MobileCalendar from '@/components/Calendar/MobileCalendar';
-import TableDetails from '@/components/tableDetails/TableDetails';
+// import TableDetails from '@/components/tableDetails/TableDetails';
 
 import { Table } from '../components/Table';
+import DeliveryTable from '@/components/DeliveryTable/DeliveryTable';
 
 export default function DeliveryDetails() {
   const buttonStyles = {
@@ -37,7 +38,7 @@ export default function DeliveryDetails() {
                 alignItems: 'center',
               }}
             >
-              <TableDetails />
+              <DeliveryTable />
             </Grid>
             <Grid
               container
@@ -65,9 +66,11 @@ export default function DeliveryDetails() {
               sx={{
                 display: 'flex',
                 justifyContent: 'center',
+                alignItems: 'flex-start',
                 boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
-                padding: '20px', 
+                padding: '40px', 
                 borderRadius: '8px', 
+                border: '1px solid #ccc'
               }}
             >
               <MobileCalendar />
@@ -79,25 +82,57 @@ export default function DeliveryDetails() {
             style={{ display: 'flex', justifyContent: 'center' }}
           >
             <Table
-              columns={['data', 'godz.', 'id', 'suma'] as const}
+              columns={['data', 'godz.', 'id', 'suma', 'PB95', 'PB98', 'DIESEL', 'LPG'] as const}
               rows={[
                 {
                   data: '22.05.2024',
                   'godz.': '21:48',
                   id: '1',
                   suma: '22222 L',
+                  PB95: '40003 L',
+                  PB98: '443555 L',
+                  DIESEL: '4355553 L',
+                  LPG: '3532 L'
                 },
                 {
                   data: '22.05.2024',
                   'godz.': '21:48',
                   id: '2',
                   suma: '22222 L',
+                  PB95: '40003 L',
+                  PB98: '443555 L',
+                  DIESEL: '4355553 L',
+                  LPG: '3532 L'
                 },
                 {
                   data: '22.05.2024',
                   'godz.': '21:48',
                   id: '3',
                   suma: '22222 L',
+                  PB95: '40003 L',
+                  PB98: '443555 L',
+                  DIESEL: '4355553 L',
+                  LPG: '3532 L'
+                },
+                {
+                  data: '22.05.2024',
+                  'godz.': '21:48',
+                  id: '2',
+                  suma: '22222 L',
+                  PB95: '40003 L',
+                  PB98: '443555 L',
+                  DIESEL: '4355553 L',
+                  LPG: '3532 L'
+                },
+                {
+                  data: '22.05.2024',
+                  'godz.': '21:48',
+                  id: '2',
+                  suma: '22222 L',
+                  PB95: '40003 L',
+                  PB98: '443555 L',
+                  DIESEL: '4355553 L',
+                  LPG: '3532 L'
                 },
               ]}
             />
