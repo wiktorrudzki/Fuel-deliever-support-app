@@ -52,8 +52,7 @@ namespace server.Services
                 Token = tokenHandler.WriteToken(token),
                 Login = user.Auth.Login,
                 Name = user.Name,
-                LastName = user.LastName,
-                
+                LastName = user.LastName, 
             };
         }
     }

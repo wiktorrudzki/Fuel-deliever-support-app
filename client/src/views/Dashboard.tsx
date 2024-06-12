@@ -1,10 +1,9 @@
-import { Outlet } from 'react-router-dom';
-
 import { getAllDeliveries } from '@/dao/delivery';
 import { usePromise } from '@/hooks';
 
 // project imports
 import './Dashboard.css';
+import Panel from './Panel';
 
 export default function Dashboard() {
   // example
@@ -20,7 +19,7 @@ export default function Dashboard() {
         </div>
         <div className="dashboard-outlet">
           <button onClick={get}>dassda</button>
-          <Outlet />
+          <Panel />
         </div>
       </div>
     </div>

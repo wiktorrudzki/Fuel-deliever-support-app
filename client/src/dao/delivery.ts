@@ -1,4 +1,4 @@
 import api from './axios';
 
-export const getAllDeliveries = (): Promise<{ id: string }[]> =>
+export const getAllDeliveries = () =>
   api.get('/Delivery/GetAllDeliveries').then((res) => res.data);
