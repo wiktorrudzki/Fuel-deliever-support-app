@@ -25,7 +25,7 @@ namespace server.Services
             _config = config;
         }
 
-        public string GenerateToken(LoginUserDto loginUserDto)
+        public UserWithTokenDto GenerateToken(LoginUserDto loginUserDto)
         {
             var user = _context.Users.Include(u => u.Auth).FirstOrDefault(p => p.Auth.Login == loginUserDto.Login);
             if (user is null) { throw new BadRequest400Exception("Login or Password is wrong"); }
@@ -46,7 +46,15 @@ namespace server.Services
             var expires = DateTime.Now.AddDays(_authenticationSettings.JwtExpireDays);
             var token = new JwtSecurityToken(_authenticationSettings.JwtIssuer, _authenticationSettings.JwtIssuer, claims, expires: expires, signingCredentials: credentails);
             var tokenHandler = new JwtSecurityTokenHandler();
-            return tokenHandler.WriteToken(token);
+            return new UserWithTokenDto()
+            {
+                Id = user.Id,
+                Token = tokenHandler.WriteToken(token),
+                Login = user.Auth.Login,
+                Name = user.Name,
+                LastName = user.LastName,
+                
+            };
         }
     }
 }

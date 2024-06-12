@@ -4,6 +4,6 @@ namespace server.Services.Interfaces
 {
     public interface IAuthService
     {
-        public string GenerateToken(LoginUserDto loginUserDto);
+        public UserWithTokenDto GenerateToken(LoginUserDto loginUserDto);
     }
 }

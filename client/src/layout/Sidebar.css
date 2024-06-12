@@ -1,17 +1,14 @@
 .sidebar-conatainer {
   background-color: rgb(255, 255, 255);
   border-right: 1px solid #b3b3b3;
-<<<<<<< HEAD
   max-width: 400px;
   height: 100vh;
   margin-left: 0;
   position: relative;
   box-shadow: 0px 4px 8px 0px rgba(0, 0, 0);
-=======
-  padding: 20px;
-  height: 100%;
-  margin-left: 0;
->>>>>>> 9cc5bac4d3030aedcce3226dbefe9f7ae5f8dddc
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
 }
 .logo-container {
   display: flex;
@@ -37,22 +34,9 @@
 .sidebar-icon {
   margin-right: 5px;
 }
-.buttons3-conatiner {
-<<<<<<< HEAD
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-=======
-  margin-top: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-direction: column;
->>>>>>> 9cc5bac4d3030aedcce3226dbefe9f7ae5f8dddc
-}
 .sidebar-button-group {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  flex: 1;
 }

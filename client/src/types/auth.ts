@@ -1,8 +1,8 @@
 export type User = {
   id: number;
   login: string;
-  name: string;
-  lastName: string;
+  name?: string;
+  lastName?: string;
 };
 
 export type UserCredentials = {
@@ -10,7 +10,6 @@ export type UserCredentials = {
   password: string;
 };
 
-export type Login = {
-  isAuth: boolean;
-  user: User;
+export type LoginResponse = User & {
+  token: string;
 };

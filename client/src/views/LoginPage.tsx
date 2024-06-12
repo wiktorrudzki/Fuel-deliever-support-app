@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // material-ui
 import VisibilityOff from '@mui/icons-material/VisibilityOffOutlined';
@@ -26,15 +27,27 @@ const LoginPage = () => {
 
   const { setUser } = useUser();
 
+  const navigate = useNavigate();
+
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
 
   const [submit, isLoading] = usePromise(
     login,
-    ({ isAuth, user }) => {
-      if (isAuth) {
+    ({ status, data }) => {
+      if (status === 200) {
+        const user = {
+          login: data.login,
+          name: data.name,
+          lastName: data.lastName,
+          id: data.id,
+        };
+
         setUser(user);
+        navigate('/dashboard');
+        localStorage.setItem('User', JSON.stringify(user));
+        localStorage.setItem('Authorization', 'Bearer ' + data.token);
       } else {
         console.error('not authenticated'); //todo handle rejection
       }
@@ -73,7 +86,7 @@ const LoginPage = () => {
         values,
       }) => (
         <form className="form" noValidate onSubmit={handleSubmit}>
-          <div className="container">
+          <div className="form-container">
             <nav>
               <img src={mainLogo} alt="main_logo" className="main-logo" />
             </nav>
