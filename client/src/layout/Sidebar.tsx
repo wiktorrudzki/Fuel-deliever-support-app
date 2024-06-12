@@ -1,4 +1,3 @@
-// import { useState } from "react";
 import { Link } from 'react-router-dom';
 
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
@@ -16,7 +15,7 @@ export default function Sidebar() {
     padding: '10px 20px',
     fontSize: '20px',
     textTransform: 'none',
-    width: '300px',
+    width: '250px',
     height: '40px',
     borderRadius: '5px',
     '&:hover': {
