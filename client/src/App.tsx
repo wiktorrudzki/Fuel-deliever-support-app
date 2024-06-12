@@ -9,6 +9,7 @@ import {
 import { Table } from '@/components/Table';
 
 import './App.css';
+import { useUser } from './hooks';
 import Layout from './layout/Layout';
 import { LoginPage, Panel } from './views';
 import Dashboard from './views/Dashboard';
@@ -88,10 +89,16 @@ function App() {
   );
 }
 
-const ProtectedRoutes = () => (
-  <Layout>
-    <Outlet />
-  </Layout>
-);
+const ProtectedRoutes = () => {
+  const { isLogged } = useUser();
+
+  return isLogged ? (
+    <Layout>
+      <Outlet />
+    </Layout>
+  ) : (
+    <Navigate to="/login" />
+  );
+};
 
 export default App;
