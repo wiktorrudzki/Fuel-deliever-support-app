@@ -19,11 +19,11 @@ export default function TableDetails() {
   return (
     <TableContainer
       component={Paper}
-      sx={{ width: '300px', borderRadius: '3%' }}
+      sx={{ maxWidth: 'auto', borderRadius: '3%', marginBottom: '70px' }}
     >
       <Table sx={{ minWidth: 200 }} aria-label="simple table">
         <TableHead>
-          <TableRow style={{ backgroundColor: '#9b9c9e' }}>
+          <TableRow>
             <TableCell style={{ paddingLeft: '32px', fontWeight: 'bold' }}>
               DATA
             </TableCell>
@@ -41,7 +41,7 @@ export default function TableDetails() {
               key={row.name}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
-              <TableCell component="th" scope="row">
+              <TableCell component="th" scope="row" style={{backgroundColor: 'white'}}>
                 {row.data}
               </TableCell>
               <TableCell align="right">{row.id}</TableCell>
