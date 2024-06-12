@@ -10,8 +10,9 @@ import { Table } from '@/components/Table';
 
 import './App.css';
 import Layout from './layout/Layout';
-import { LoginPage } from './views';
+import { LoginPage, Panel } from './views';
 import Dashboard from './views/Dashboard';
+import DeliveryDetails from './views/DeliveryDetails';
 
 function App() {
   return (
@@ -73,8 +74,12 @@ function App() {
                 />
               }
             />
+
             <Route path="/old-about" element={<Navigate to="/about" />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/dashboard" element={<Dashboard />}>
+              <Route path="" element={<Panel />} />
+              <Route path="delivery-details" element={<DeliveryDetails />} />
+            </Route>
             <Route path="*" element={<h2>404 Not Found</h2>} />
           </Route>
         </Routes>

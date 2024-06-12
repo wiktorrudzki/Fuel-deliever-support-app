@@ -1,9 +1,10 @@
+import { Outlet } from 'react-router-dom';
+
 import { getDeliveryById } from '@/dao/delivery';
 import { usePromise } from '@/hooks';
 
 // project imports
 import './Dashboard.css';
-import Panel from './Panel';
 
 export default function Dashboard() {
   // example
@@ -19,7 +20,7 @@ export default function Dashboard() {
         </div>
         <div className="dashboard-outlet">
           <button onClick={() => get('1')}>dassda</button>
-          <Panel />
+          <Outlet />
         </div>
       </div>
     </div>

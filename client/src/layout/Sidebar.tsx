@@ -60,7 +60,7 @@ export default function Sidebar() {
           <Button
             sx={buttonStyles}
             component={Link}
-            to="/dashboard/deliveryDetails"
+            to="/dashboard/delivery-details"
           >
             <LocalShippingIcon className="sidebar-icon" /> Dodaj dostawę{' '}
           </Button>
