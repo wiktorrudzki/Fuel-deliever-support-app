@@ -1,0 +1,66 @@
+.card-container {
+  width: 50%;
+  height: 250px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #b3b3b3;
+  border-radius: 5px;
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.content-text {
+  margin: 0;
+}
+
+.card-title {
+  border-bottom: 1px solid #b3b3b3;
+  border-radius: 5px;
+}
+
+.title {
+  margin: 5px 0 5px 15px;
+  font-size: 14px;
+}
+
+.phone-field {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.phone {
+  margin-left: 20px;
+}
+
+.address-field {
+  display: flex;
+  align-items: start;
+  margin-bottom: 15px;
+}
+
+.address-data {
+  margin-left: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.address-field .icon {
+  margin-top: 4px;
+}
+
+.map-field {
+  display: flex;
+  align-items: center;
+}
+
+.map-link {
+  color: #2665d2;
+  margin-left: 10px;
+}

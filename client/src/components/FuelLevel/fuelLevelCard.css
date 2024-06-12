@@ -1,14 +1,33 @@
 .tableContainer {
   width: 300px;
-  border-radius: 12px !important;
+  border-radius: 5px !important;
   overflow: hidden;
+  border: 1.5px solid #b3b3b3 !important;
 }
 .tableCell {
   border: 1.5px solid #b3b3b3 !important;
+  background-color: var(--white);
 }
 .mainContainer {
   margin-top: 10px;
   display: flex;
   flex-direction: row;
-  width: fit-content;
+  width: 24.65%;
 }
+
+.noPadding {
+  padding: 2px !important;
+}
+
+.table-level-container {
+  width: 320px;
+  height: 120px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+/* @media (max-width: 1600px) {
+  .table-level-container {
+    width: 220px;
+  }
+} */
