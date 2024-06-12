@@ -1,4 +1,4 @@
-import { getAllDeliveries } from '@/dao/delivery';
+import { getDeliveryById } from '@/dao/delivery';
 import { usePromise } from '@/hooks';
 
 // project imports
@@ -7,8 +7,8 @@ import Panel from './Panel';
 
 export default function Dashboard() {
   // example
-  const [get] = usePromise(getAllDeliveries, (d) => {
-    console.log(d);
+  const [get] = usePromise(getDeliveryById, (response) => {
+    console.log(response.data);
   });
 
   return (
@@ -18,7 +18,7 @@ export default function Dashboard() {
           <h1 className="dashboard-title">PANEL</h1>
         </div>
         <div className="dashboard-outlet">
-          <button onClick={get}>dassda</button>
+          <button onClick={() => get('1')}>dassda</button>
           <Panel />
         </div>
       </div>

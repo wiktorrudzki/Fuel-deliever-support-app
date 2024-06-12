@@ -1,4 +1,9 @@
+import { AxiosResponse } from 'axios';
+
 import api from './axios';
 
-export const getAllDeliveries = () =>
-  api.get('/Delivery/GetAllDeliveries').then((res) => res.data);
+export const getAllDeliveries = (): Promise<AxiosResponse<unknown[]>> =>
+  api.get('/Delivery/GetAllDeliveries');
+
+export const getDeliveryById = (id: string) =>
+  api.get(`/Delivery/GetDeliveryById?id=${id}`);
