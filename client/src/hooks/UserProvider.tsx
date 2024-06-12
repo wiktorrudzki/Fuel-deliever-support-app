@@ -28,6 +28,7 @@ export const UserProvider = ({ children }: Props) => {
     if (!user && storedUser && token) {
       setUser(JSON.parse(storedUser));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
