@@ -14,8 +14,8 @@ namespace server.Controllers
         [HttpPost("login")]
         public ActionResult Login([FromBody] LoginUserDto loginUserDto)
         {
-            var token = _authService.GenerateToken(loginUserDto);
-            return Ok(token);
+            var response = _authService.GenerateToken(loginUserDto);
+            return Ok(response);
 
         }
     }

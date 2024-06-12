@@ -1,16 +1,16 @@
 import { useState } from 'react';
 
 const usePromise = <T, A>(
-  creator: (args?: T) => Promise<A>,
+  creator: (args: T) => Promise<A>,
   onSuccess?: (data: A) => void,
   onFailure?: (reason: unknown) => void
 ) => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const invoker = () => {
+  const invoker = (args: T) => {
     setIsLoading(true);
 
-    return creator()
+    return creator(args)
       .then((data) => {
         if (onSuccess) {
           onSuccess(data);

@@ -1,8 +1,10 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import { Box, Button, Divider } from '@mui/material';
+
+import { useUser } from '@/hooks';
 
 import mainLogo from '../icons/mainLogo.svg';
 import './Sidebar.css';
@@ -24,6 +26,18 @@ export default function Sidebar() {
     },
   });
   // const [isCollapsed, setIsCollapsed] = useState(false);
+
+  const { setUser } = useUser();
+
+  const navigate = useNavigate();
+
+  const logout = () => {
+    localStorage.removeItem('Authorization');
+    localStorage.removeItem('User');
+    setUser(null);
+    navigate('/login');
+  };
+
   return (
     <Box className="sidebar-conatainer">
       <Box className="logo-container">
@@ -43,12 +57,16 @@ export default function Sidebar() {
           <Button sx={buttonStyles}>
             <CalendarMonthIcon className="sidebar-icon" /> Terminarz
           </Button>
-          <Button sx={buttonStyles} component={Link} to="/dashboard/deliveryDetails">
+          <Button
+            sx={buttonStyles}
+            component={Link}
+            to="/dashboard/deliveryDetails"
+          >
             <LocalShippingIcon className="sidebar-icon" /> Dodaj dostawę{' '}
           </Button>
         </Box>
-        <Box className="buttons3-conatiner">
-          <Button sx={{ ...buttonStyles(), border: 'none' }}>
+        <Box>
+          <Button onClick={logout} sx={buttonStyles}>
             Wyloguj się
           </Button>
         </Box>
