@@ -68,7 +68,7 @@ CREATE TABLE Auth (
 
 -- Create Indexes
 CREATE UNIQUE INDEX IX_CurrentFuelVolume_StationId ON CurrentFuelVolume (StationId);
-CREATE UNIQUE INDEX IX_Deliveries_DriverId ON Deliveries (DriverId);
+CREATE INDEX IX_Deliveries_DriverId ON Deliveries (DriverId);
 CREATE INDEX IX_Deliveries_StationId ON Deliveries (StationId);
 CREATE UNIQUE INDEX IX_DeliveriesPrediction_StationId ON DeliveriesPrediction (StationId);
 CREATE UNIQUE INDEX IX_StationsCapacity_StationId ON StationsCapacity (StationId);

@@ -3,6 +3,7 @@ using Data;
 using Data.Entities;
 using Data.Models;
 using Microsoft.EntityFrameworkCore;
+using server.Exceptions;
 using server.Services.Interfaces;
 
 namespace server.Services
@@ -38,5 +39,20 @@ namespace server.Services
 
             return stationDto;
         }
+
+        public async Task<StationEntity> GetOneAsync(int id)
+        {
+            var station = await _dbContext.Stations
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Id == id);
+
+            if (station == null)
+            {
+                throw new NotFound404Exception("Station not found!");
+            }
+
+            return station;
+        }
+
     }
 }

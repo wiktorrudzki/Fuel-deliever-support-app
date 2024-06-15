@@ -37,6 +37,17 @@ namespace server.Services
 
         }
 
+        public async Task<DriverEntity> GetOneAsync(int id)
+        {
+            var driver = await _dbContext.Drivers.FirstOrDefaultAsync(e => e.Id == id);
+
+            if (driver is null)
+            {
+                throw new NotFound404Exception("Driver not found.");
+            }
+
+            return driver;
+        }
 
     }
 }
