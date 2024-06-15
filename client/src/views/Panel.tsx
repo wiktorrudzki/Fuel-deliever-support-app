@@ -23,7 +23,7 @@ const Panel = () => {
 
   useEffect(() => {
     getPrediction();
-  }, []);
+  }, [getPrediction]);
 
   const prediction = predictions[id];
   const date = prediction.departureTime.toISOString().split('T')[0];
