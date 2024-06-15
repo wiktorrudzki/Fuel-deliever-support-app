@@ -1,4 +1,5 @@
-﻿using Data.Models;
+﻿using Data.Entities;
+using Data.Models;
 
 namespace server.Services.Interfaces
 {
@@ -6,5 +7,6 @@ namespace server.Services.Interfaces
     {
         Task<StationDto> GetStationAsync(int id);
         Task<IEnumerable<StationDto>> GetAllStationsAsync();
+        Task<StationEntity> GetOneAsync(int id);
     }
 }
