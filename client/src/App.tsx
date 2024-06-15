@@ -78,7 +78,8 @@ function App() {
 
             <Route path="/old-about" element={<Navigate to="/about" />} />
             <Route path="/dashboard" element={<Dashboard />}>
-              <Route path="" element={<Panel />} />
+              <Route path="" element={<></>} />
+              <Route path=":id" element={<Panel />} />
               <Route path="delivery-details" element={<DeliveryDetails />} />
             </Route>
             <Route path="*" element={<h2>404 Not Found</h2>} />

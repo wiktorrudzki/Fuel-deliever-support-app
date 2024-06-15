@@ -1,16 +1,17 @@
 import { useState } from 'react';
 
-const usePromise = <T, A>(
-  creator: (args: T) => Promise<A>,
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const usePromise = <T extends any[], A>(
+  creator: (...args: T) => Promise<A>,
   onSuccess?: (data: A) => void,
   onFailure?: (reason: unknown) => void
 ) => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const invoker = (args: T) => {
+  const invoker = (...args: T) => {
     setIsLoading(true);
 
-    return creator(args)
+    return creator(...args)
       .then((data) => {
         if (onSuccess) {
           onSuccess(data);
