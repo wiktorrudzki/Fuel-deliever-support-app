@@ -97,8 +97,8 @@ const Table = <T extends string, K extends string>({
         </thead>
         <tbody>
           {rows.map((row, index) => (
-            <>
-              <tr key={row.id + index.toString()}>
+            <div key={row.id + index.toString()}>
+              <tr>
                 {extend && (
                   <td
                     className="extender"
@@ -117,7 +117,7 @@ const Table = <T extends string, K extends string>({
               </tr>
 
               {getExpandedRowData(row.id)}
-            </>
+            </div>
           ))}
         </tbody>
       </table>

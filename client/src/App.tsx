@@ -23,7 +23,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/" element={<ProtectedRoutes />}>
             <Route
-              path="/table"
+              path="table"
               element={
                 <Table
                   columns={['data', 'godz.', 'id', 'suma'] as const}
@@ -77,7 +77,7 @@ function App() {
             />
 
             <Route path="/old-about" element={<Navigate to="/about" />} />
-            <Route path="/dashboard" element={<Dashboard />}>
+            <Route path="dashboard" element={<Dashboard />}>
               <Route path="" element={<></>} />
               <Route path=":id" element={<Panel />} />
               <Route path="delivery-details" element={<DeliveryDetails />} />

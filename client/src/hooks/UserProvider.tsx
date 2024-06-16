@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from 'react';
+import { createContext, useState } from 'react';
 
 import { User } from '@/types/auth';
 
@@ -15,21 +15,12 @@ type Props = {
 };
 
 export const UserProvider = ({ children }: Props) => {
-  const [user, setUser] = useState<User | null>(null);
+  const storedUser = localStorage.getItem('User');
+  const token = localStorage.getItem('Authorization');
 
-  useEffect(() => {
-    if (user) {
-      return;
-    }
-
-    const storedUser = localStorage.getItem('User');
-    const token = localStorage.getItem('Authorization');
-
-    if (!user && storedUser && token) {
-      setUser(JSON.parse(storedUser));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const [user, setUser] = useState<User | null>(
+    storedUser && token ? JSON.parse(storedUser) : null
+  );
 
   return (
     <UserContext.Provider value={{ isLogged: user !== null, user, setUser }}>
