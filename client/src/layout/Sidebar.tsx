@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
@@ -36,12 +36,16 @@ export default function Sidebar() {
 
   const { stations, isLoading } = useStations();
 
+  const params = useParams();
+
   const logout = () => {
     localStorage.removeItem('Authorization');
     localStorage.removeItem('User');
     setUser(null);
     navigate('/login');
   };
+
+  const deliveryId = params.id;
 
   return (
     <Box className="sidebar-conatainer">
@@ -58,6 +62,11 @@ export default function Sidebar() {
               sx={buttonStyles}
               component={Link}
               to={`/dashboard/${s.id}`}
+              style={
+                deliveryId && parseInt(deliveryId) === s.id
+                  ? { backgroundColor: 'black', color: 'white' }
+                  : undefined
+              }
             >
               {s.name}
             </Button>
@@ -72,13 +81,15 @@ export default function Sidebar() {
           <Button sx={buttonStyles}>
             <CalendarMonthIcon className="sidebar-icon" /> Terminarz
           </Button>
-          <Button
-            sx={buttonStyles}
-            component={Link}
-            to="/dashboard/delivery-details"
-          >
-            <LocalShippingIcon className="sidebar-icon" /> Dodaj dostawę{' '}
-          </Button>
+          {deliveryId && (
+            <Button
+              sx={buttonStyles}
+              component={Link}
+              to={`/dashboard/add-delivery/${deliveryId}`}
+            >
+              <LocalShippingIcon className="sidebar-icon" /> Dodaj dostawę
+            </Button>
+          )}
         </Box>
         <Box>
           <Button onClick={logout} sx={buttonStyles}>

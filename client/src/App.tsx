@@ -12,8 +12,7 @@ import './App.css';
 import { useUser } from './hooks';
 import Layout from './layout/Layout';
 import { LoginPage, Panel } from './views';
-import Dashboard from './views/Dashboard';
-import DeliveryDetails from './views/DeliveryDetails';
+import { AddDelivery, Dashboard } from './views';
 
 function App() {
   return (
@@ -77,10 +76,10 @@ function App() {
             />
 
             <Route path="/old-about" element={<Navigate to="/about" />} />
-            <Route path="dashboard" element={<Dashboard />}>
+            <Route path="dashboard" element={<Dashboard title="PANEL" />}>
               <Route path="" element={<></>} />
               <Route path=":id" element={<Panel />} />
-              <Route path="delivery-details" element={<DeliveryDetails />} />
+              <Route path="add-delivery/:id" element={<AddDelivery />} />
             </Route>
             <Route path="*" element={<h2>404 Not Found</h2>} />
           </Route>
