@@ -25,9 +25,8 @@ public class CleanDeliveryService : ICleanDeliveryService
     
     public async Task<DeliveryEntity> CreateAsync(CreateDeliveryDto dto)
     {
-        await _driverService.GetOneAsync(dto.DriverId);
-        await _stationService.GetOneAsync(dto.StationId);
-        
+        await CheckCreation(dto);
+
         var deliveryEntity = _mapper.Map<DeliveryEntity>(dto);
         var res = await _dbContext.AddAsync(deliveryEntity);
         await _dbContext.SaveChangesAsync();
@@ -64,6 +63,12 @@ public class CleanDeliveryService : ICleanDeliveryService
         await CheckRelationsInUpdateAsync(dto);
 
         Merge(delivery, dto);
+
+        if (dto.DriverId.HasValue || dto.DepartureTime.HasValue)
+        {
+            await CheckForDeliveryConflictAsync(delivery.DriverId, delivery.DepartureTime);
+        }
+        
         _dbContext.Update(delivery);
         await _dbContext.SaveChangesAsync();
 
@@ -113,5 +118,24 @@ public class CleanDeliveryService : ICleanDeliveryService
         {
             await _driverService.GetOneAsync(dto.StationId.Value);
         }
+    }
+
+    private async Task CheckForDeliveryConflictAsync(int driverId, DateTime dateTime)
+    {
+        var collision =
+            await _dbContext.Deliveries.Where(e => e.DriverId == driverId && e.DepartureTime.Date == dateTime.Date)
+                .AnyAsync();
+
+        if (collision)
+        {
+            throw new Conflict409Exception("The driver runs that day!");
+        }
+    }
+
+    private async Task CheckCreation(CreateDeliveryDto dto)
+    {
+        await _driverService.GetOneAsync(dto.DriverId);
+        await _stationService.GetOneAsync(dto.StationId);
+        await CheckForDeliveryConflictAsync(dto.DriverId, dto.DepartureTime);
     }
 }
