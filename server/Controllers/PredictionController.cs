@@ -24,5 +24,14 @@ namespace server.Controllers
 
             return Ok(predictions);
         }
+
+        [HttpGet]
+        [Route("{id}")]
+        public async Task<IActionResult> GetOne(int id)
+        {
+            var prediction = await _predictionService.GetPredictionAsync(id);
+
+            return Ok(prediction);
+        }
     }
 }
