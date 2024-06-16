@@ -7,5 +7,6 @@ namespace server.Services.Interfaces
     {
         Task<IEnumerable<DeliveryPredictionDto>> GetAllPredictionsAsync();
         Task <DeliveryPredictionDto> GetPredictionAsync(int id);
+        Task<List<DeliveryPredictionEntity>> GetAll(GetDeliveryPredictionQuery queryParams);
     }
 }

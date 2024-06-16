@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Data;
+using Data.Entities;
 using Data.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
@@ -44,6 +45,20 @@ namespace server.Services
             var predictionDto = _mapper.Map<DeliveryPredictionDto>(prediction);
 
             return predictionDto;
+        }
+
+        public async Task<List<DeliveryPredictionEntity>> GetAll(GetDeliveryPredictionQuery queryParams)
+        {
+            var query = _dbContext.DeliveriesPrediction.AsQueryable();
+
+            if (queryParams.StationId != null)
+            {
+                query = query.Where(e => e.StationId == queryParams.StationId);
+            }
+
+            var predictions = await query.OrderByDescending(e => e.Id).AsNoTracking().ToListAsync();
+
+            return predictions;
         }
     }
 }
