@@ -78,7 +78,11 @@ export default function Sidebar() {
       <Divider sx={{ borderTop: '2px solid #B3B3B3' }} />
       <Box className="sidebar-button-group">
         <Box className="buttons2-conatiner">
-          <Button sx={buttonStyles}>
+          <Button
+            sx={buttonStyles}
+            component={Link}
+            to={`/dashboard/calendar`}
+          >
             <CalendarMonthIcon className="sidebar-icon" /> Terminarz
           </Button>
           {deliveryId && (

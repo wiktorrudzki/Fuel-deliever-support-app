@@ -4,7 +4,11 @@
   color: black;
   background-color: rgb(255, 255, 255);
 }
-.fuel-icon{
+.fuel-icon {
   color: rgb(70, 70, 70);
   font-size: 20px;
+}
+
+.calendar {
+  /* background-color: red !important; */
 }

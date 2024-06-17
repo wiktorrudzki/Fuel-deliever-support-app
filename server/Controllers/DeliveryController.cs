@@ -36,9 +36,9 @@ namespace server.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] int? stationId)
         {
-            var deliveries = await _deliveryService.GetAllAsync();
+            var deliveries = await _deliveryService.GetAllAsync(stationId);
 
             var res = _mapper.Map<List<DeliveryDto>>(deliveries);
 

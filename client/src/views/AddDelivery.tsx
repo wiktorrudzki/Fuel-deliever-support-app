@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 
 import { Grid, Box } from '@mui/material';
+import dayjs from 'dayjs';
 
 import MobileCalendar from '@/components/Calendar/MobileCalendar';
 import { LoadingOverlay } from '@/components/LoadingOverlay';
@@ -21,10 +22,6 @@ export default function AddDelivery() {
   const [station, setStation] = useState<Station>();
   const [deliveries, setDeliveries] = useState<Delivery[]>([]);
 
-  const [getDeliveries] = usePromise(getAllDeliveries, (response) => {
-    setDeliveries(response.data);
-  });
-
   const [get, isLoading] = usePromise(
     getStationById,
     ({ data }) => {
@@ -36,19 +33,28 @@ export default function AddDelivery() {
     }
   );
 
+  const [getAllDeliveriesData] = usePromise(
+    getAllDeliveries,
+    ({ data }) => {
+      setDeliveries(data); // Ustawienie wszystkich dostaw w stanie delivery
+    },
+    (err) => {
+      console.error(err);
+      return backToDashboard();
+    }
+  );
+
   useEffect(() => {
     if (stationId && parseInt(stationId)) {
-      get(parseInt(stationId));
+      const parsedStationId = parseInt(stationId);
+
+      get(parsedStationId);
+      getAllDeliveriesData(parsedStationId);
     } else {
       backToDashboard();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stationId]);
-
-  useEffect(() => {
-    getDeliveries();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const backToDashboard = () => <Navigate to="/dashboard" />;
 
@@ -76,6 +82,12 @@ export default function AddDelivery() {
     return backToDashboard();
   }
 
+  console.log(deliveries);
+
+  const highlightedDates = deliveries
+    .filter((item) => item.stationId === station?.id)
+    .map((item) => dayjs(item.departureTime));
+
   return (
     <Box>
       <Grid container spacing={4}>
@@ -94,7 +106,7 @@ export default function AddDelivery() {
               border: '1px solid #ccc',
             }}
           >
-            <MobileCalendar />
+            <MobileCalendar highlightedDates={highlightedDates} />
           </Box>
         </Grid>
         <Grid
