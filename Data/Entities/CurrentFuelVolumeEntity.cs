@@ -11,6 +11,5 @@ namespace Data.Entities
         public int TurboDiesel { get; set; }
         public int StationId { get; set; }
         public StationEntity? Station { get; set; }
-        
     }
 }
