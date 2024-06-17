@@ -58,7 +58,7 @@ const Panel = () => {
           pb95: `${prediction.pb95} L`,
           pb98: `${prediction.pb98} L`,
           diesel: `${prediction.diesel} L`,
-          lpg: `${prediction.turboDiesel} L`,
+          'turbo diesel': `${prediction.turboDiesel} L`,
           suma: `${prediction.pb95 + prediction.pb98 + prediction.diesel + prediction.turboDiesel} L`,
         },
       ]
@@ -84,7 +84,7 @@ const Panel = () => {
           'pb95',
           'pb98',
           'diesel',
-          'lpg',
+          'turbo diesel',
           'suma',
         ]}
         rows={rows}
