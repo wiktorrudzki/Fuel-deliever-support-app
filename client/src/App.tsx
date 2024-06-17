@@ -13,6 +13,7 @@ import { useUser } from './hooks';
 import Layout from './layout/Layout';
 import { LoginPage, Panel } from './views';
 import { AddDelivery, Dashboard } from './views';
+import Calendar from './views/Calendar';
 
 function App() {
   return (
@@ -80,6 +81,7 @@ function App() {
               <Route path="" element={<></>} />
               <Route path=":id" element={<Panel />} />
               <Route path="add-delivery/:id" element={<AddDelivery />} />
+              <Route path="calendar" element={<Calendar />} />
             </Route>
             <Route path="*" element={<h2>404 Not Found</h2>} />
           </Route>

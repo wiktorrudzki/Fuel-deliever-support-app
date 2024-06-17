@@ -11,11 +11,12 @@ import './MobileCalendar.css';
 const initialValue = dayjs();
 
 interface CustomDayProps extends PickersDayProps<Dayjs> {
+  stationId?: number;
   highlightedDates?: Dayjs[];
 }
 
 function CustomDay(props: CustomDayProps) {
-  const { highlightedDates = [], day, outsideCurrentMonth, ...other } = props;
+  const { stationId, highlightedDates = [], day, outsideCurrentMonth, ...other } = props;
 
   const isSelected =
     !outsideCurrentMonth &&
@@ -28,7 +29,7 @@ function CustomDay(props: CustomDayProps) {
       key={day.toString()}
       overlap="circular"
       badgeContent={
-        isSelected ? <LocalGasStationIcon className="fuel-icon" /> : undefined
+        isSelected ? <LocalGasStationIcon className="fuel-icon" style={{ color: getIconColor(stationId) }} /> : undefined
       }
     >
       <PickersDay
@@ -40,14 +41,25 @@ function CustomDay(props: CustomDayProps) {
   );
 }
 
-export default function MobileCalendar() {
-  const highlightedDates = [
-    dayjs('2024-05-29'),
-    dayjs('2024-05-26'),
-    dayjs('2024-05-23'),
-    dayjs('2024-04-23'),
-  ];
+const getIconColor = (stationId?: number): string => {
+  switch (stationId) {
+    case 1:
+      return '#ff9800';
+    case 2:
+      return '#4caf50';
+    case 3:
+      return '#2196f3';
+    default:
+      return '#000';
+  }
+};
 
+interface MobileCalendarProps {
+  highlightedDates: Dayjs[];
+  stationId?: number;
+}
+
+export default function MobileCalendar({ highlightedDates, stationId }: MobileCalendarProps) {
   return (
     <div className="calendar-container">
       <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -60,6 +72,7 @@ export default function MobileCalendar() {
           slotProps={{
             day: {
               highlightedDates,
+              stationId,
             } as CustomDayProps,
           }}
         />
