@@ -1,4 +1,4 @@
-import { CSSProperties, useState } from 'react';
+import { CSSProperties, Fragment, useState } from 'react';
 
 import ArrowDownIcon from '@/icons/arrow-down.svg';
 import ArrowRightIcon from '@/icons/arrow-right.svg';
@@ -82,45 +82,49 @@ const Table = <T extends string, K extends string>({
 
   return (
     <LoadingOverlay isLoading={false}>
-      <table
-        width={width}
-        style={{ tableLayout: extend ? 'initial' : 'fixed', ...style }}
-      >
-        <thead>
-          <tr>
-            {extend && <th></th>}
+      <div className="table-wrapper">
+        <table
+          width={width}
+          style={{ tableLayout: extend ? 'auto' : 'fixed', ...style }}
+        >
+          <thead>
+            <tr>
+              {extend && <th></th>}
 
-            {columns.map((column) => (
-              <th key={column}>{column.toUpperCase()}</th>
+              {columns.map((column) => (
+                <th key={column}>{column.toUpperCase()}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row, index) => (
+              <Fragment key={row.id + index.toString()}>
+                <tr>
+                  {extend && (
+                    <td
+                      className="extender"
+                      onClick={() => handleExtendRow(row.id)}
+                    >
+                      <img
+                        src={
+                          isExpanded(row.id) ? ArrowDownIcon : ArrowRightIcon
+                        }
+                        alt="extend-icon"
+                      />
+                    </td>
+                  )}
+
+                  {(Object.keys(row) as T[]).map((key, i) => (
+                    <td key={row[key] + i.toString()}>{row[key]}</td>
+                  ))}
+                </tr>
+
+                {getExpandedRowData(row.id)}
+              </Fragment>
             ))}
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row, index) => (
-            <>
-              <tr key={row.id + index.toString()}>
-                {extend && (
-                  <td
-                    className="extender"
-                    onClick={() => handleExtendRow(row.id)}
-                  >
-                    <img
-                      src={isExpanded(row.id) ? ArrowDownIcon : ArrowRightIcon}
-                      alt="extend-icon"
-                    />
-                  </td>
-                )}
-
-                {(Object.keys(row) as T[]).map((key, i) => (
-                  <td key={row[key] + i.toString()}>{row[key]}</td>
-                ))}
-              </tr>
-
-              {getExpandedRowData(row.id)}
-            </>
-          ))}
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      </div>
     </LoadingOverlay>
   );
 };

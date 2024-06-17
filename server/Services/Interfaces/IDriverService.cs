@@ -1,4 +1,5 @@
-﻿using Data.Models;
+﻿using Data.Entities;
+using Data.Models;
 
 namespace server.Services.Interfaces
 {
@@ -6,7 +7,6 @@ namespace server.Services.Interfaces
     {
         Task<DriverDto> GetDriverAsync(int id);
         Task<IEnumerable<DriverDto>> GetAllDriversAsync();
-
-        
+        Task<DriverEntity> GetOneAsync(int id);
     }
 }

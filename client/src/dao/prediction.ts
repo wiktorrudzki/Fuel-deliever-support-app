@@ -1,6 +1,6 @@
-import { AxiosResponse } from 'axios';
+import { Prediction } from '@/types/prediction';
 
 import api from './axios';
 
-export const getAllPredictions = (): Promise<AxiosResponse<unknown[]>> =>
-  api.get('/Prediction/GetAllPredictions');
+export const getPredictionById = (id: number) =>
+  api.get<Prediction>(`/Prediction/${id}`);

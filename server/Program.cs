@@ -29,6 +29,7 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
 builder.Services.AddTransient<Seed>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 var authenticationSettings = new AuthenticationSettings();
 builder.Services.AddSingleton(authenticationSettings);
 builder.Configuration.GetSection("Authentication").Bind(authenticationSettings);
@@ -52,6 +53,7 @@ builder.Services.AddAuthentication(option =>
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IStationService, StationService>();
 builder.Services.AddScoped<IDeliveryService, DeliveryService>();
+builder.Services.AddScoped<ICleanDeliveryService, CleanDeliveryService>();
 builder.Services.AddScoped<IDriverService, DriverService>();
 builder.Services.AddScoped<IPredictionService, PredictionService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
