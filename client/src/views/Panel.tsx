@@ -24,10 +24,10 @@ const Panel = () => {
 
   console.log(id);
 
-  const [predictions, setPredictions] = useState<Prediction | null>(null);
+  const [prediction, setPrediction] = useState<Prediction | null>(null);
 
   const [getPrediction] = usePromise(getPredictionById, (response) => {
-    setPredictions(response.data);
+    setPrediction(response.data);
   });
 
   useEffect(() => {
@@ -43,23 +43,23 @@ const Panel = () => {
     }
   }, [id, getPrediction]);
 
-  const rows = predictions
+  const rows = prediction
     ? [
         {
-          data: predictions.departureTime.split('T')[0],
-          'godz.': new Date(predictions.departureTime).toLocaleTimeString(
+          data: prediction.departureTime.split('T')[0],
+          'godz.': new Date(prediction.departureTime).toLocaleTimeString(
             'pl-PL',
             {
               hour: '2-digit',
               minute: '2-digit',
             }
           ),
-          id: predictions.id.toString(),
-          pb95: `${predictions.pb95} L`,
-          pb98: `${predictions.pb98} L`,
-          diesel: `${predictions.diesel} L`,
-          lpg: `${predictions.turboDiesel} L`,
-          suma: `${predictions.pb95 + predictions.pb98 + predictions.diesel + predictions.turboDiesel} L`,
+          id: prediction.id.toString(),
+          pb95: `${prediction.pb95} L`,
+          pb98: `${prediction.pb98} L`,
+          diesel: `${prediction.diesel} L`,
+          lpg: `${prediction.turboDiesel} L`,
+          suma: `${prediction.pb95 + prediction.pb98 + prediction.diesel + prediction.turboDiesel} L`,
         },
       ]
     : [];
