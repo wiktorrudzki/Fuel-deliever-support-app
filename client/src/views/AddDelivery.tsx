@@ -3,15 +3,15 @@ import { Navigate, useParams } from 'react-router-dom';
 
 import { Grid, Box } from '@mui/material';
 
-// import { styled } from '@mui/material/styles';
 import MobileCalendar from '@/components/Calendar/MobileCalendar';
 import { LoadingOverlay } from '@/components/LoadingOverlay';
+import { getAllDeliveries } from '@/dao/delivery';
 import { getStationById } from '@/dao/station';
 import { EditDelivery } from '@/features/AddDelivery';
 import { usePromise } from '@/hooks';
+import { Delivery } from '@/types/delivery';
 import { Station } from '@/types/station';
 
-// import TableDetails from '@/components/tableDetails/TableDetails';
 import { Table } from '../components/Table';
 
 export default function AddDelivery() {
@@ -19,8 +19,11 @@ export default function AddDelivery() {
   const stationId = params.id;
 
   const [station, setStation] = useState<Station>();
+  const [deliveries, setDeliveries] = useState<Delivery[]>([]);
 
-  const backToDashboard = () => <Navigate to="/dashboard" />;
+  const [getDeliveries] = usePromise(getAllDeliveries, (response) => {
+    setDeliveries(response.data);
+  });
 
   const [get, isLoading] = usePromise(
     getStationById,
@@ -41,6 +44,33 @@ export default function AddDelivery() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stationId]);
+
+  useEffect(() => {
+    getDeliveries();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const backToDashboard = () => <Navigate to="/dashboard" />;
+
+  const mappedDeliveries = deliveries.map((item) => {
+    const departureTime = new Date(item.departureTime);
+    const date = departureTime.toLocaleDateString('pl-PL');
+    const time = departureTime.toLocaleTimeString('pl-PL', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+
+    return {
+      data: date,
+      'godz.': time,
+      id: item.id.toString(),
+      PB95: item.pb95,
+      PB98: item.pb98,
+      DIESEL: item.diesel,
+      'TURBO DIESEL': item.turboDiesel,
+      suma: item.pb95 + item.pb98 + item.diesel + item.turboDiesel,
+    };
+  });
 
   if (!stationId) {
     return backToDashboard();
@@ -73,70 +103,17 @@ export default function AddDelivery() {
           style={{ display: 'flex', justifyContent: 'center' }}
         >
           <Table
-            columns={
-              [
-                'data',
-                'godz.',
-                'id',
-                'suma',
-                'PB95',
-                'PB98',
-                'DIESEL',
-                'LPG',
-              ] as const
-            }
-            rows={[
-              {
-                data: '22.05.2024',
-                'godz.': '21:48',
-                id: '1',
-                suma: '22222 L',
-                PB95: '40003 L',
-                PB98: '443555 L',
-                DIESEL: '4355553 L',
-                LPG: '3532 L',
-              },
-              {
-                data: '22.05.2024',
-                'godz.': '21:48',
-                id: '2',
-                suma: '22222 L',
-                PB95: '40003 L',
-                PB98: '443555 L',
-                DIESEL: '4355553 L',
-                LPG: '3532 L',
-              },
-              {
-                data: '22.05.2024',
-                'godz.': '21:48',
-                id: '3',
-                suma: '22222 L',
-                PB95: '40003 L',
-                PB98: '443555 L',
-                DIESEL: '4355553 L',
-                LPG: '3532 L',
-              },
-              {
-                data: '22.05.2024',
-                'godz.': '21:48',
-                id: '2',
-                suma: '22222 L',
-                PB95: '40003 L',
-                PB98: '443555 L',
-                DIESEL: '4355553 L',
-                LPG: '3532 L',
-              },
-              {
-                data: '22.05.2024',
-                'godz.': '21:48',
-                id: '2',
-                suma: '22222 L',
-                PB95: '40003 L',
-                PB98: '443555 L',
-                DIESEL: '4355553 L',
-                LPG: '3532 L',
-              },
+            columns={[
+              'data',
+              'godz.',
+              'id',
+              'suma',
+              'PB95',
+              'PB98',
+              'DIESEL',
+              'TURBO DIESEL',
             ]}
+            rows={mappedDeliveries}
           />
         </Grid>
       </Grid>

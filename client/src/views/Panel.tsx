@@ -22,8 +22,6 @@ interface Prediction {
 const Panel = () => {
   const { id } = useParams<{ id: string }>();
 
-  console.log(id);
-
   const [prediction, setPrediction] = useState<Prediction | null>(null);
 
   const [getPrediction] = usePromise(getPredictionById, (response) => {

@@ -1,11 +1,9 @@
-import { AxiosResponse } from 'axios';
-
-import { DeliveryCreate } from '@/types/delivery';
+import { Delivery, DeliveryCreate } from '@/types/delivery';
 
 import api from './axios';
 
-export const getAllDeliveries = (): Promise<AxiosResponse<unknown[]>> =>
-  api.get('/Delivery/GetAllDeliveries');
+export const getAllDeliveries = () =>
+  api.get<Delivery[]>('/Delivery/GetAllDeliveries');
 
 export const getDeliveryById = (id: string) =>
   api.get(`/Delivery/GetDeliveryById?id=${id}`);
