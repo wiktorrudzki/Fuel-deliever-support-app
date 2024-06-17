@@ -1,27 +1,31 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 
 import { Grid, Box } from '@mui/material';
 
 // import { styled } from '@mui/material/styles';
 import MobileCalendar from '@/components/Calendar/MobileCalendar';
-import { getDeliveryById } from '@/dao/delivery';
+import { LoadingOverlay } from '@/components/LoadingOverlay';
+import { getStationById } from '@/dao/station';
 import { EditDelivery } from '@/features/AddDelivery';
 import { usePromise } from '@/hooks';
+import { Station } from '@/types/station';
 
 // import TableDetails from '@/components/tableDetails/TableDetails';
 import { Table } from '../components/Table';
 
 export default function AddDelivery() {
   const params = useParams();
-  const deliveryId = params.id;
+  const stationId = params.id;
+
+  const [station, setStation] = useState<Station>();
 
   const backToDashboard = () => <Navigate to="/dashboard" />;
 
-  const [get] = usePromise(
-    getDeliveryById,
-    (data) => {
-      console.log(data);
+  const [get, isLoading] = usePromise(
+    getStationById,
+    ({ data }) => {
+      setStation(data);
     },
     (err) => {
       console.error(err);
@@ -30,22 +34,24 @@ export default function AddDelivery() {
   );
 
   useEffect(() => {
-    if (deliveryId) {
-      get(deliveryId);
+    if (stationId && parseInt(stationId)) {
+      get(parseInt(stationId));
     } else {
       backToDashboard();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [deliveryId]);
+  }, [stationId]);
 
-  if (!deliveryId) {
+  if (!stationId) {
     return backToDashboard();
   }
 
   return (
     <Box>
       <Grid container spacing={4}>
-        <EditDelivery id={parseInt(deliveryId)} />
+        <LoadingOverlay isLoading={isLoading}>
+          {station && <EditDelivery station={station} />}
+        </LoadingOverlay>
         <Grid item xs={12} md={4}>
           <Box
             sx={{

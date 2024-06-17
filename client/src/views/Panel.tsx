@@ -41,7 +41,8 @@ const Panel = () => {
     } else {
       console.error('Id is undefined');
     }
-  }, [id, getPrediction]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const rows = prediction
     ? [
