@@ -19,8 +19,8 @@ namespace Data
             {
                 var stations = new[]
                 {
-                    CreateStation("Station A"),
-                    CreateStation("Station B"),
+                    CreateStation("Station A","000 000 000", "Jan Kowalski","Sympatyczna 51, 15-686 Białystok", "https://maps.app.goo.gl/bSW9mY4pofVxELM97"),
+                    CreateStation("Station B", "111 111 111", "Anna Nowak", "Łączna 43, 68-213 Lipinki Łużyckie", "https://maps.app.goo.gl/yWFJ56YgkgqQyuts5"),
                 };
                 _dbContext.Stations.AddRange(stations);
                 _dbContext.SaveChanges();
@@ -112,9 +112,9 @@ namespace Data
                 }
             };
         }
-        private StationEntity CreateStation(string name)
+        private StationEntity CreateStation(string name, string phoneNumber, string owner, string address, string mapURL)
         {
-            return new StationEntity {Name = name };
+            return new StationEntity {Name = name , PhoneNumber = phoneNumber, Owner = owner, Address = address, MapURL = mapURL};
         }
         private DriverEntity CreateDriver(string name, string station)
         {
