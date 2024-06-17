@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240523090706_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20240617200937_NewSeeding2")]
+    partial class NewSeeding2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -103,8 +103,7 @@ namespace server.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DriverId")
-                        .IsUnique();
+                    b.HasIndex("DriverId");
 
                     b.HasIndex("StationId");
 
@@ -255,8 +254,8 @@ namespace server.Migrations
             modelBuilder.Entity("Data.Entities.DeliveryEntity", b =>
                 {
                     b.HasOne("Data.Entities.DriverEntity", "Driver")
-                        .WithOne("Delivery")
-                        .HasForeignKey("Data.Entities.DeliveryEntity", "DriverId")
+                        .WithMany("Delivery")
+                        .HasForeignKey("DriverId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
