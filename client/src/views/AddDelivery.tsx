@@ -25,7 +25,6 @@ export default function AddDelivery() {
   const [get, isLoading] = usePromise(
     getStationById,
     ({ data }) => {
-      console.log(data);
       setStation(data);
     },
     (err) => {

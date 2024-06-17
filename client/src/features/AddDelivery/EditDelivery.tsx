@@ -47,9 +47,9 @@ const EditDelivery = ({ station }: Props) => {
   const [get, isLoadingGet] = usePromise(getPredictionById, ({ data }) =>
     setPrediction(data)
   );
-  const [create, isLoadingCreate] = usePromise(createDelivery, ({ data }) =>
-    console.log(data, 'xd')
-  );
+  const [create, isLoadingCreate] = usePromise(createDelivery, () => {
+    formRef.current.resetFields();
+  });
 
   const [getDrivers, isLoadingDrivers] = usePromise(
     getAllDrivers,
@@ -64,7 +64,6 @@ const EditDelivery = ({ station }: Props) => {
   }, []);
 
   const handleSubmit = (values: PredictionCreate) => {
-    console.log({ ...values, stationId: station.id });
     if (
       values.departureTime &&
       values.diesel &&
@@ -76,12 +75,12 @@ const EditDelivery = ({ station }: Props) => {
       create({ ...values, stationId: station.id } as DeliveryCreate);
   };
 
-  console.log(prediction);
-
   return (
     <Grid item xs={12} md={8}>
-      <LoadingOverlay isLoading={isLoadingGet || isLoadingDrivers}>
-        {drivers.length ? (
+      <LoadingOverlay
+        isLoading={isLoadingGet || isLoadingDrivers || !drivers.length}
+      >
+        {drivers.length && (
           <Formik
             innerRef={formRef}
             initialValues={{
@@ -166,8 +165,6 @@ const EditDelivery = ({ station }: Props) => {
               </form>
             )}
           </Formik>
-        ) : (
-          <div>Brak dostępnych kierowców</div>
         )}
       </LoadingOverlay>
     </Grid>
