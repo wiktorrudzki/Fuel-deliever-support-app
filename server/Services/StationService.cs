@@ -32,6 +32,8 @@ namespace server.Services
         public async Task<StationDto> GetStationAsync(int id)
         {
             var station = await _dbContext.Stations
+                .Include(e => e.StationCapacity)
+                .Include(e => e.CurrentFuelVolume)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(u => u.Id == id);
 
@@ -43,6 +45,8 @@ namespace server.Services
         public async Task<StationEntity> GetOneAsync(int id)
         {
             var station = await _dbContext.Stations
+                .Include(e => e.StationCapacity)
+                .Include(e => e.CurrentFuelVolume)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(u => u.Id == id);
 

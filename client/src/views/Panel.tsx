@@ -1,11 +1,69 @@
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+
 import FuelLevelCard from '@/components/FuelLevel';
 import { Table } from '@/components/Table';
 import { Card } from '@/components/card';
 import Station1chart from '@/components/charts/Station1chart';
+import { getPredictionById } from '@/dao/prediction';
+import { usePromise } from '@/hooks';
 
 import './Panel.css';
 
+interface Prediction {
+  id: number;
+  departureTime: string;
+  pb95: number;
+  pb98: number;
+  diesel: number;
+  turboDiesel: number;
+}
+
 const Panel = () => {
+  const { id } = useParams<{ id: string }>();
+
+  console.log(id);
+
+  const [prediction, setPrediction] = useState<Prediction | null>(null);
+
+  const [getPrediction] = usePromise(getPredictionById, (response) => {
+    setPrediction(response.data);
+  });
+
+  useEffect(() => {
+    if (id !== undefined) {
+      const parsedId = parseInt(id, 10);
+      if (!isNaN(parsedId)) {
+        getPrediction(parsedId);
+      } else {
+        console.error(`Id: ${id} is not a valid number`);
+      }
+    } else {
+      console.error('Id is undefined');
+    }
+  }, [id, getPrediction]);
+
+  const rows = prediction
+    ? [
+        {
+          data: prediction.departureTime.split('T')[0],
+          'godz.': new Date(prediction.departureTime).toLocaleTimeString(
+            'pl-PL',
+            {
+              hour: '2-digit',
+              minute: '2-digit',
+            }
+          ),
+          id: prediction.id.toString(),
+          pb95: `${prediction.pb95} L`,
+          pb98: `${prediction.pb98} L`,
+          diesel: `${prediction.diesel} L`,
+          'turbo diesel': `${prediction.turboDiesel} L`,
+          suma: `${prediction.pb95 + prediction.pb98 + prediction.diesel + prediction.turboDiesel} L`,
+        },
+      ]
+    : [];
+
   return (
     <div className="panel-container">
       <div className="chart-info">
@@ -26,91 +84,10 @@ const Panel = () => {
           'pb95',
           'pb98',
           'diesel',
-          'lpg',
+          'turbo diesel',
           'suma',
         ]}
-        rows={[
-          {
-            data: '22.05.2024',
-            'godz.': '21:48',
-            id: '1',
-            suma: '22222 L',
-            pb95: '20102 L',
-            pb98: '20102 L',
-            diesel: '20102 L',
-            lpg: '20102 L',
-          },
-          {
-            data: '22.05.2024',
-            'godz.': '21:48',
-            id: '2',
-            suma: '22222 L',
-            pb95: '20102 L',
-            pb98: '20102 L',
-            diesel: '20102 L',
-            lpg: '20102 L',
-          },
-          {
-            data: '22.05.2024',
-            'godz.': '21:48',
-            id: '3',
-            suma: '22222 L',
-            pb95: '20102 L',
-            pb98: '20102 L',
-            diesel: '20102 L',
-            lpg: '20102 L',
-          },
-          {
-            data: '22.05.2024',
-            'godz.': '21:48',
-            id: '3',
-            suma: '22222 L',
-            pb95: '20102 L',
-            pb98: '20102 L',
-            diesel: '20102 L',
-            lpg: '20102 L',
-          },
-          {
-            data: '22.05.2024',
-            'godz.': '21:48',
-            id: '3',
-            suma: '22222 L',
-            pb95: '20102 L',
-            pb98: '20102 L',
-            diesel: '20102 L',
-            lpg: '20102 L',
-          },
-          {
-            data: '22.05.2024',
-            'godz.': '21:48',
-            id: '3',
-            suma: '22222 L',
-            pb95: '20102 L',
-            pb98: '20102 L',
-            diesel: '20102 L',
-            lpg: '20102 L',
-          },
-          {
-            data: '22.05.2024',
-            'godz.': '21:48',
-            id: '3',
-            suma: '22222 L',
-            pb95: '20102 L',
-            pb98: '20102 L',
-            diesel: '20102 L',
-            lpg: '20102 L',
-          },
-          {
-            data: '22.05.2024',
-            'godz.': '21:48',
-            id: '3',
-            suma: '22222 L',
-            pb95: '20102 L',
-            pb98: '20102 L',
-            diesel: '20102 L',
-            lpg: '20102 L',
-          },
-        ]}
+        rows={rows}
       />
     </div>
   );
