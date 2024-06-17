@@ -16,5 +16,5 @@ export type DeliveryCreate = {
   turboDiesel: number;
   departureTime: string;
   diesel: number;
-  driverId?: number;
+  driverId: number;
 };

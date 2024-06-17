@@ -15,7 +15,7 @@ const Panel = () => {
       <div className="fuelLevel">
         <FuelLevelCard />
         <FuelLevelCard />
-        <FuelLevelCard />
+      <FuelLevelCard />
         <FuelLevelCard />
       </div>
       <Table

@@ -10,5 +10,8 @@ export type Prediction = {
 };
 
 export type PredictionCreate = Partial<
-  Pick<Prediction, 'departureTime' | 'diesel' | 'pb95' | 'pb98' | 'turboDiesel'>
+  Pick<
+    Prediction,
+    'departureTime' | 'diesel' | 'pb95' | 'pb98' | 'turboDiesel' | 'driverId'
+  >
 >;
