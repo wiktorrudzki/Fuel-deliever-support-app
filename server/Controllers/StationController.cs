@@ -16,7 +16,7 @@ namespace server.Controllers
         {
             _stationService = stationService;
         }
-
+        
         [HttpGet]
         [Authorize]
         [Route("GetAllStations")]
