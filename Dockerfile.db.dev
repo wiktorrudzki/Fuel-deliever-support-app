@@ -4,6 +4,3 @@ ENV ACCEPT_EULA=Y
 ENV SA_PASSWORD=Password123@!
 
 WORKDIR /usr/src/app
-COPY ../db/ /usr/src/app
-
-HEALTHCHECK --interval=30s --timeout=15s --start-period=5s --retries=3 CMD /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P Password123@! -d master -i seed.sql || exit 1

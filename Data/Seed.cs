@@ -1,4 +1,5 @@
-﻿using Data.Entities;
+﻿using System.Runtime.CompilerServices;
+using Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
@@ -20,7 +21,6 @@ namespace Data
                 {
                     CreateStation("Station A"),
                     CreateStation("Station B"),
-                    CreateStation("Station C")
                 };
                 _dbContext.Stations.AddRange(stations);
                 _dbContext.SaveChanges();
@@ -32,7 +32,6 @@ namespace Data
                 {
                     CreateDriver("John", "Station A"),
                     CreateDriver("Alice", "Station B"),
-                    CreateDriver("Bob", "Station C")
                 };
                 _dbContext.Drivers.AddRange(drivers);
                 _dbContext.SaveChanges();
@@ -44,7 +43,6 @@ namespace Data
                 {
                     CreateUser( "John", "Doe", "john.doe@example.com", "password123"),
                     CreateUser( "Alice", "Smith", "alice.smith@example.com", "qwerty456"),
-                    CreateUser( "Bob", "Johnson", "bob.johnson@example.com", "securepass789")
                 };
 
                 _dbContext.Users.AddRange(users);
@@ -53,24 +51,13 @@ namespace Data
 
             var driversFromDb = _dbContext.Drivers.ToList();
             var stationsFromDb = _dbContext.Stations.ToList();
-
-            if (!_dbContext.Deliveries.Any())
-            {
-                var deliveries = new[]
-                {
-                    CreateDelivery(1000, 1500, 800, 1200, DateTime.Now, driversFromDb[0].Id, stationsFromDb[0].Id),
-                    CreateDelivery(1000, 1500, 800, 1200, DateTime.Now, driversFromDb[1].Id, stationsFromDb[1].Id),
-                    CreateDelivery(1000, 1500, 800, 1200, DateTime.Now, driversFromDb[2].Id, stationsFromDb[2].Id)
-                };
-                _dbContext.Deliveries.AddRange(deliveries);
-            }
+            
             if (!_dbContext.DeliveriesPrediction.Any())
             {
                 var deliveryPredictions = new[]
                 {
                     CreateDeliveryPrediction(DateTime.Now.AddHours(3), 2000, 2500, 1800, 2200,  stationsFromDb[0].Id),
                     CreateDeliveryPrediction(DateTime.Now.AddHours(3), 2000, 2500, 1800, 2200,  stationsFromDb[1].Id),
-                    CreateDeliveryPrediction(DateTime.Now.AddHours(3), 2000, 2500, 1800, 2200,  stationsFromDb[2].Id)
                 };
                 _dbContext.DeliveriesPrediction.AddRange(deliveryPredictions);
 
@@ -81,7 +68,6 @@ namespace Data
                 {
                     CreateStationCapacity(5000, 6000, 4000, 5500, stationsFromDb[0].Id),
                     CreateStationCapacity(5000, 6000, 4000, 5500, stationsFromDb[1].Id),
-                    CreateStationCapacity(5000, 6000, 4000, 5500, stationsFromDb[2].Id)
                 };
                 _dbContext.StationsCapacity.AddRange(stationCapacities);
             }
@@ -91,13 +77,15 @@ namespace Data
                 {
                     CreateCurrentFuelVolume(3000, 3500, 2500, 3200, stationsFromDb[0].Id),
                     CreateCurrentFuelVolume(3000, 3500, 2500, 3200, stationsFromDb[1].Id),
-                    CreateCurrentFuelVolume(3000, 3500, 2500, 3200, stationsFromDb[2].Id)
                 };
                 _dbContext.CurrentFuelVolume.AddRange(currentFuelVolumes);
             }
             _dbContext.SaveChanges();
 
-            
+            if (!_dbContext.Deliveries.Any())
+            {
+                _dbContext.Database.ExecuteSql(FormattableStringFactory.Create(DeliveriesSeed.InsertStatement));
+            }
         }
         private void ClearDatabase()
         {
@@ -152,7 +140,6 @@ namespace Data
         {
             return new CurrentFuelVolumeEntity { Pb95 = pb95, Diesel = diesel, Pb98 = pb98, TurboDiesel = turboDiesel, StationId = stationId };
         }
-
     }
 }
 

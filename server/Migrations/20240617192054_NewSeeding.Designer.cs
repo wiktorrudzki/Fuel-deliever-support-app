@@ -4,6 +4,7 @@ using Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240617192054_NewSeeding")]
+    partial class NewSeeding
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -100,7 +103,8 @@ namespace server.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DriverId");
+                    b.HasIndex("DriverId")
+                        .IsUnique();
 
                     b.HasIndex("StationId");
 
@@ -251,8 +255,8 @@ namespace server.Migrations
             modelBuilder.Entity("Data.Entities.DeliveryEntity", b =>
                 {
                     b.HasOne("Data.Entities.DriverEntity", "Driver")
-                        .WithMany("Delivery")
-                        .HasForeignKey("DriverId")
+                        .WithOne("Delivery")
+                        .HasForeignKey("Data.Entities.DeliveryEntity", "DriverId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

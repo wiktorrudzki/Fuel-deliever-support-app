@@ -1,194 +1,9 @@
-CREATE TABLE Drivers (
-    Id INT IDENTITY(1,1) PRIMARY KEY,
-    Name NVARCHAR(MAX),
-    Station NVARCHAR(MAX)
-);
-
-CREATE TABLE Stations (
-    Id INT IDENTITY(1,1) PRIMARY KEY,
-    Name NVARCHAR(MAX)
-);
-
-CREATE TABLE Users (
-    Id INT IDENTITY(1,1) PRIMARY KEY,
-    Name NVARCHAR(MAX),
-    LastName NVARCHAR(MAX)
-);
-
-CREATE TABLE CurrentFuelVolume (
-    Id INT IDENTITY(1,1) PRIMARY KEY,
-    Pb95 INT NOT NULL,
-    Diesel INT NOT NULL,
-    Pb98 INT NOT NULL,
-    TurboDiesel INT NOT NULL,
-    StationId INT NOT NULL,
-    FOREIGN KEY (StationId) REFERENCES Stations(Id) ON DELETE CASCADE
-);
-
-CREATE TABLE Deliveries (
-    Id INT IDENTITY(1,1) PRIMARY KEY,
-    Pb95 INT NOT NULL,
-    Diesel INT NOT NULL,
-    Pb98 INT NOT NULL,
-    TurboDiesel INT NOT NULL,
-    DepartureTime DATETIME2 NOT NULL,
-    DriverId INT NOT NULL,
-    StationId INT NOT NULL,
-    FOREIGN KEY (DriverId) REFERENCES Drivers(Id) ON DELETE CASCADE,
-    FOREIGN KEY (StationId) REFERENCES Stations(Id) ON DELETE CASCADE
-);
-
-CREATE TABLE DeliveriesPrediction (
-    Id INT IDENTITY(1,1) PRIMARY KEY,
-    DepartureTime DATETIME2 NOT NULL,
-    Pb95 INT NOT NULL,
-    Diesel INT NOT NULL,
-    Pb98 INT NOT NULL,
-    TurboDiesel INT NOT NULL,
-    StationId INT NOT NULL,
-    FOREIGN KEY (StationId) REFERENCES Stations(Id) ON DELETE CASCADE
-);
-
-CREATE TABLE StationsCapacity (
-    Id INT IDENTITY(1,1) PRIMARY KEY,
-    Pb95 INT NOT NULL,
-    Diesel INT NOT NULL,
-    Pb98 INT NOT NULL,
-    TurboDiesel INT NOT NULL,
-    StationId INT NOT NULL,
-    FOREIGN KEY (StationId) REFERENCES Stations(Id) ON DELETE CASCADE
-);
-
-CREATE TABLE Auth (
-    UserId INT PRIMARY KEY,
-    Login NVARCHAR(MAX),
-    Password NVARCHAR(MAX),
-    FOREIGN KEY (UserId) REFERENCES Users(Id) ON DELETE CASCADE
-);
-
--- Create Indexes
-CREATE UNIQUE INDEX IX_CurrentFuelVolume_StationId ON CurrentFuelVolume (StationId);
-CREATE INDEX IX_Deliveries_DriverId ON Deliveries (DriverId);
-CREATE INDEX IX_Deliveries_StationId ON Deliveries (StationId);
-CREATE UNIQUE INDEX IX_DeliveriesPrediction_StationId ON DeliveriesPrediction (StationId);
-CREATE UNIQUE INDEX IX_StationsCapacity_StationId ON StationsCapacity (StationId);
-
--- Insert stations if not exists
-INSERT INTO Stations (Name)
-SELECT 'Station A'
-WHERE NOT EXISTS (SELECT 1 FROM Stations WHERE Name = 'Station A');
-
-INSERT INTO Stations (Name)
-SELECT 'Station B'
-WHERE NOT EXISTS (SELECT 1 FROM Stations WHERE Name = 'Station B');
-
-INSERT INTO Stations (Name)
-SELECT 'Station C'
-WHERE NOT EXISTS (SELECT 1 FROM Stations WHERE Name = 'Station C');
-
--- Insert drivers if not exists
-INSERT INTO Drivers (Name, Station)
-SELECT 'John', 'Station A'
-WHERE NOT EXISTS (SELECT 1 FROM Drivers WHERE Name = 'John' AND Station = 'Station A');
-
-INSERT INTO Drivers (Name, Station)
-SELECT 'Alice', 'Station B'
-WHERE NOT EXISTS (SELECT 1 FROM Drivers WHERE Name = 'Alice' AND Station = 'Station B');
-
-INSERT INTO Drivers (Name, Station)
-SELECT 'Bob', 'Station C'
-WHERE NOT EXISTS (SELECT 1 FROM Drivers WHERE Name = 'Bob' AND Station = 'Station C');
-
--- Insert users if not exists
-INSERT INTO Users (Name, LastName, Email, Password)
-SELECT 'John', 'Doe', 'john.doe@example.com', 'password123'
-WHERE NOT EXISTS (SELECT 1 FROM Users WHERE Email = 'john.doe@example.com');
-
-INSERT INTO Users (Name, LastName, Email, Password)
-SELECT 'Alice', 'Smith', 'alice.smith@example.com', 'qwerty456'
-WHERE NOT EXISTS (SELECT 1 FROM Users WHERE Email = 'alice.smith@example.com');
-
-INSERT INTO Users (Name, LastName, Email, Password)
-SELECT 'Bob', 'Johnson', 'bob.johnson@example.com', 'securepass789'
-WHERE NOT EXISTS (SELECT 1 FROM Users WHERE Email = 'bob.johnson@example.com');
-
--- Insert deliveries if not exists
-INSERT INTO Deliveries (Pb95, Diesel, Pb98, TurboDiesel, DepartureTime, DriverId, StationId)
-SELECT 1000, 1500, 800, 1200, GETDATE(), d.Id, s.Id
-FROM Drivers d, Stations s
-WHERE d.Name = 'John' AND s.Name = 'Station A'
-AND NOT EXISTS (SELECT 1 FROM Deliveries WHERE DriverId = d.Id AND StationId = s.Id);
-
-INSERT INTO Deliveries (Pb95, Diesel, Pb98, TurboDiesel, DepartureTime, DriverId, StationId)
-SELECT 1000, 1500, 800, 1200, GETDATE(), d.Id, s.Id
-FROM Drivers d, Stations s
-WHERE d.Name = 'Alice' AND s.Name = 'Station B'
-AND NOT EXISTS (SELECT 1 FROM Deliveries WHERE DriverId = d.Id AND StationId = s.Id);
-
-INSERT INTO Deliveries (Pb95, Diesel, Pb98, TurboDiesel, DepartureTime, DriverId, StationId)
-SELECT 1000, 1500, 800, 1200, GETDATE(), d.Id, s.Id
-FROM Drivers d, Stations s
-WHERE d.Name = 'Bob' AND s.Name = 'Station C'
-AND NOT EXISTS (SELECT 1 FROM Deliveries WHERE DriverId = d.Id AND StationId = s.Id);
-
--- Insert delivery predictions if not exists
-INSERT INTO DeliveriesPrediction (DepartureTime, Pb95, Diesel, Pb98, TurboDiesel, StationId)
-SELECT DATEADD(hour, 3, GETDATE()), 2000, 2500, 1800, 2200, s.Id
-FROM Stations s
-WHERE s.Name = 'Station A'
-AND NOT EXISTS (SELECT 1 FROM DeliveriesPrediction WHERE StationId = s.Id);
-
-INSERT INTO DeliveriesPrediction (DepartureTime, Pb95, Diesel, Pb98, TurboDiesel, StationId)
-SELECT DATEADD(hour, 3, GETDATE()), 2000, 2500, 1800, 2200, s.Id
-FROM Stations s
-WHERE s.Name = 'Station B'
-AND NOT EXISTS (SELECT 1 FROM DeliveriesPrediction WHERE StationId = s.Id);
-
-INSERT INTO DeliveriesPrediction (DepartureTime, Pb95, Diesel, Pb98, TurboDiesel, StationId)
-SELECT DATEADD(hour, 3, GETDATE()), 2000, 2500, 1800, 2200, s.Id
-FROM Stations s
-WHERE s.Name = 'Station C'
-AND NOT EXISTS (SELECT 1 FROM DeliveriesPrediction WHERE StationId = s.Id);
-
--- Insert station capacities if not exists
-INSERT INTO StationsCapacity (Pb95, Diesel, Pb98, TurboDiesel, StationId)
-SELECT 5000, 6000, 4000, 5500, s.Id
-FROM Stations s
-WHERE s.Name = 'Station A'
-AND NOT EXISTS (SELECT 1 FROM StationsCapacity WHERE StationId = s.Id);
-
-INSERT INTO StationsCapacity (Pb95, Diesel, Pb98, TurboDiesel, StationId)
-SELECT 5000, 6000, 4000, 5500, s.Id
-FROM Stations s
-WHERE s.Name = 'Station B'
-AND NOT EXISTS (SELECT 1 FROM StationsCapacity WHERE StationId = s.Id);
-
-INSERT INTO StationsCapacity (Pb95, Diesel, Pb98, TurboDiesel, StationId)
-SELECT 5000, 6000, 4000, 5500, s.Id
-FROM Stations s
-WHERE s.Name = 'Station C'
-AND NOT EXISTS (SELECT 1 FROM StationsCapacity WHERE StationId = s.Id);
-
--- Insert current fuel volumes if not exists
-INSERT INTO CurrentFuelVolume (Pb95, Diesel, Pb98, TurboDiesel, StationId)
-SELECT 3000, 3500, 2500, 3200, s.Id
-FROM Stations s
-WHERE s.Name = 'Station A'
-AND NOT EXISTS (SELECT 1 FROM CurrentFuelVolume WHERE StationId = s.Id);
-
-INSERT INTO CurrentFuelVolume (Pb95, Diesel, Pb98, TurboDiesel, StationId)
-SELECT 3000, 3500, 2500, 3200, s.Id
-FROM Stations s
-WHERE s.Name = 'Station B'
-AND NOT EXISTS (SELECT 1 FROM CurrentFuelVolume WHERE StationId = s.Id);
-
-INSERT INTO CurrentFuelVolume (Pb95, Diesel, Pb98, TurboDiesel, StationId)
-SELECT 3000, 3500, 2500, 3200, s.Id
-FROM Stations s
-WHERE s.Name = 'Station C'
-AND NOT EXISTS (SELECT 1 FROM CurrentFuelVolume WHERE StationId = s.Id);
-
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+namespace Data 
+{
+    public static class DeliveriesSeed
+    {
+        public static string InsertStatement = @"
+INSERT INTO Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
 	 (10000,18989,0,3598,'2016-11-01 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2016-11-02 00:00:00.0000000',1,1),
 	 (0,26505,0,6998,'2016-11-03 00:00:00.0000000',1,1),
@@ -198,8 +13,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,0,0,0,'2016-11-07 00:00:00.0000000',1,1),
 	 (0,22996,7000,3999,'2016-11-08 00:00:00.0000000',1,1),
 	 (11001,18993,0,4000,'2016-11-09 00:00:00.0000000',1,1),
-	 (11957,23001,0,0,'2016-11-10 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (11957,23001,0,0,'2016-11-10 00:00:00.0000000',1,1),
 	 (6000,19500,0,6998,'2016-11-11 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2016-11-12 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2016-11-13 00:00:00.0000000',1,1),
@@ -209,8 +23,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,0,0,0,'2016-11-17 00:00:00.0000000',1,1),
 	 (4063,25988,0,4000,'2016-11-18 00:00:00.0000000',1,1),
 	 (5198,26001,0,3003,'2016-11-19 00:00:00.0000000',1,1),
-	 (0,0,0,0,'2016-11-20 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,0,0,0,'2016-11-20 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2016-11-21 00:00:00.0000000',1,1),
 	 (0,29996,0,3599,'2016-11-22 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2016-11-23 00:00:00.0000000',1,1),
@@ -220,8 +33,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,22004,7000,5002,'2016-11-27 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2016-11-28 00:00:00.0000000',1,1),
 	 (0,27990,0,5498,'2016-11-29 00:00:00.0000000',1,1),
-	 (30002,0,6000,0,'2016-11-29 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (30002,0,6000,0,'2016-11-29 00:00:00.0000000',1,1),
 	 (0,28600,0,4998,'2016-11-30 00:00:00.0000000',1,1),
 	 (5001,25996,0,2999,'2016-12-01 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2016-12-02 00:00:00.0000000',1,1),
@@ -231,8 +43,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,0,0,0,'2016-12-06 00:00:00.0000000',1,1),
 	 (4001,26988,0,3000,'2016-12-07 00:00:00.0000000',1,1),
 	 (15002,16992,0,2999,'2016-12-08 00:00:00.0000000',1,1),
-	 (0,28294,0,4999,'2016-12-09 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,28294,0,4999,'2016-12-09 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2016-12-10 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2016-12-11 00:00:00.0000000',1,1),
 	 (7001,20292,0,3999,'2016-12-12 00:00:00.0000000',1,1),
@@ -242,8 +53,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,0,0,0,'2016-12-16 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2016-12-17 00:00:00.0000000',1,1),
 	 (0,26592,0,7004,'2016-12-18 00:00:00.0000000',1,1),
-	 (0,29597,0,2999,'2016-12-19 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,29597,0,2999,'2016-12-19 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2016-12-20 00:00:00.0000000',1,1),
 	 (8900,19000,3000,3999,'2016-12-21 00:00:00.0000000',1,1),
 	 (6665,19999,3000,4000,'2016-12-22 00:00:00.0000000',1,1),
@@ -253,8 +63,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,0,0,0,'2016-12-26 00:00:00.0000000',1,1),
 	 (4001,24988,0,5000,'2016-12-27 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2016-12-28 00:00:00.0000000',1,1),
-	 (12001,18998,0,2999,'2016-12-29 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (12001,18998,0,2999,'2016-12-29 00:00:00.0000000',1,1),
 	 (0,28600,0,4998,'2016-12-30 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2016-12-31 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-01-01 00:00:00.0000000',1,1),
@@ -264,8 +73,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,29099,0,3999,'2017-01-05 00:00:00.0000000',1,1),
 	 (14000,17699,0,2999,'2017-01-06 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-01-07 00:00:00.0000000',1,1),
-	 (0,0,0,0,'2017-01-08 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,0,0,0,'2017-01-08 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-01-09 00:00:00.0000000',1,1),
 	 (0,24563,0,8999,'2017-01-10 00:00:00.0000000',1,1),
 	 (12000,15999,4000,3001,'2017-01-11 00:00:00.0000000',1,1),
@@ -275,8 +83,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,0,0,0,'2017-01-15 00:00:00.0000000',1,1),
 	 (5182,24996,0,4000,'2017-01-16 00:00:00.0000000',1,1),
 	 (9002,19998,0,3599,'2017-01-17 00:00:00.0000000',1,1),
-	 (15002,16997,3000,0,'2017-01-18 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (15002,16997,3000,0,'2017-01-18 00:00:00.0000000',1,1),
 	 (0,29996,0,3630,'2017-01-19 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-01-20 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-01-21 00:00:00.0000000',1,1),
@@ -286,8 +93,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (7000,22987,0,3998,'2017-01-25 00:00:00.0000000',1,1),
 	 (4501,25989,0,3501,'2017-01-26 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-01-27 00:00:00.0000000',1,1),
-	 (0,0,0,0,'2017-01-28 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,0,0,0,'2017-01-28 00:00:00.0000000',1,1),
 	 (0,29625,0,4007,'2017-01-29 00:00:00.0000000',1,1),
 	 (4001,25696,0,2996,'2017-01-30 00:00:00.0000000',1,1),
 	 (12000,16489,0,2996,'2017-01-31 00:00:00.0000000',1,1),
@@ -297,8 +103,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,0,0,0,'2017-02-04 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-02-05 00:00:00.0000000',1,1),
 	 (0,25999,0,6597,'2017-02-06 00:00:00.0000000',1,1),
-	 (14000,16002,0,5000,'2017-02-07 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (14000,16002,0,5000,'2017-02-07 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-02-08 00:00:00.0000000',1,1),
 	 (0,28589,0,5000,'2017-02-09 00:00:00.0000000',1,1),
 	 (10002,19495,0,4001,'2017-02-10 00:00:00.0000000',1,1),
@@ -308,8 +113,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (7001,20990,0,5997,'2017-02-14 00:00:00.0000000',1,1),
 	 (0,23991,7000,3002,'2017-02-15 00:00:00.0000000',1,1),
 	 (0,25997,3000,4938,'2017-02-16 00:00:00.0000000',1,1),
-	 (0,0,0,0,'2017-02-17 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,0,0,0,'2017-02-17 00:00:00.0000000',1,1),
 	 (7001,26994,0,0,'2017-02-18 00:00:00.0000000',1,1),
 	 (9000,18994,0,5992,'2017-02-19 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-02-20 00:00:00.0000000',1,1),
@@ -319,8 +123,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,0,0,0,'2017-02-24 00:00:00.0000000',1,1),
 	 (4000,27389,0,0,'2017-02-25 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-02-26 00:00:00.0000000',1,1),
-	 (0,0,0,0,'2017-02-27 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,0,0,0,'2017-02-27 00:00:00.0000000',1,1),
 	 (0,33601,0,0,'2017-02-28 00:00:00.0000000',1,1),
 	 (3401,18991,0,11500,'2017-03-01 00:00:00.0000000',1,1),
 	 (10400,20996,0,2996,'2017-03-02 00:00:00.0000000',1,1),
@@ -330,8 +133,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,0,0,0,'2017-03-06 00:00:00.0000000',1,1),
 	 (0,27587,0,3993,'2017-03-07 00:00:00.0000000',1,1),
 	 (4002,26998,3000,0,'2017-03-08 00:00:00.0000000',1,1),
-	 (0,24992,0,4998,'2017-03-09 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,24992,0,4998,'2017-03-09 00:00:00.0000000',1,1),
 	 (5401,19491,0,5996,'2017-03-10 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-03-11 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-03-12 00:00:00.0000000',1,1),
@@ -341,8 +143,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,27989,0,2998,'2017-03-16 00:00:00.0000000',1,1),
 	 (8000,20490,0,4996,'2017-03-17 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-03-18 00:00:00.0000000',1,1),
-	 (0,22593,0,5000,'2017-03-19 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,22593,0,5000,'2017-03-19 00:00:00.0000000',1,1),
 	 (5000,24996,0,3003,'2017-03-20 00:00:00.0000000',1,1),
 	 (0,19989,0,7997,'2017-03-21 00:00:00.0000000',1,1),
 	 (0,27995,0,2996,'2017-03-22 00:00:00.0000000',1,1),
@@ -352,8 +153,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,0,0,0,'2017-03-26 00:00:00.0000000',1,1),
 	 (0,25590,0,6000,'2017-03-27 00:00:00.0000000',1,1),
 	 (0,20990,0,3000,'2017-03-28 00:00:00.0000000',1,1),
-	 (0,24996,0,6000,'2017-03-29 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,24996,0,6000,'2017-03-29 00:00:00.0000000',1,1),
 	 (5000,23996,0,4000,'2017-03-30 00:00:00.0000000',1,1),
 	 (5001,23995,0,5000,'2017-03-31 00:00:00.0000000',1,1),
 	 (0,29992,0,3000,'2017-04-01 00:00:00.0000000',1,1),
@@ -363,8 +163,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,22993,0,3000,'2017-04-05 00:00:00.0000000',1,1),
 	 (5001,23993,0,3000,'2017-04-06 00:00:00.0000000',1,1),
 	 (10000,15994,0,4999,'2017-04-07 00:00:00.0000000',1,1),
-	 (0,0,0,0,'2017-04-08 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,0,0,0,'2017-04-08 00:00:00.0000000',1,1),
 	 (0,23994,0,2000,'2017-04-09 00:00:00.0000000',1,1),
 	 (0,22999,0,3000,'2017-04-10 00:00:00.0000000',1,1),
 	 (0,23997,0,4000,'2017-04-11 00:00:00.0000000',1,1),
@@ -374,8 +173,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,0,0,0,'2017-04-15 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-04-16 00:00:00.0000000',1,1),
 	 (5001,25998,0,2000,'2017-04-17 00:00:00.0000000',1,1),
-	 (0,0,0,0,'2017-04-18 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,0,0,0,'2017-04-18 00:00:00.0000000',1,1),
 	 (5000,27992,0,2000,'2017-04-19 00:00:00.0000000',1,1),
 	 (0,26992,0,3000,'2017-04-20 00:00:00.0000000',1,1),
 	 (0,22993,0,3000,'2017-04-21 00:00:00.0000000',1,1),
@@ -385,8 +183,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,0,0,0,'2017-04-25 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-04-26 00:00:00.0000000',1,1),
 	 (5000,24989,0,3000,'2017-04-27 00:00:00.0000000',1,1),
-	 (0,0,0,0,'2017-04-28 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,0,0,0,'2017-04-28 00:00:00.0000000',1,1),
 	 (6501,24792,0,3006,'2017-04-29 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-04-30 00:00:00.0000000',1,1),
 	 (9000,20995,0,4581,'2017-05-02 00:00:00.0000000',1,1),
@@ -396,8 +193,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (5170,23998,0,4045,'2017-05-06 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-05-07 00:00:00.0000000',1,1),
 	 (0,27500,4000,0,'2017-05-08 00:00:00.0000000',1,1),
-	 (9001,17493,0,6495,'2017-05-09 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (9001,17493,0,6495,'2017-05-09 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-05-10 00:00:00.0000000',1,1),
 	 (0,31597,0,0,'2017-05-11 00:00:00.0000000',1,1),
 	 (6002,21000,0,6998,'2017-05-12 00:00:00.0000000',1,1),
@@ -407,8 +203,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (9001,21992,0,3006,'2017-05-16 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-05-17 00:00:00.0000000',1,1),
 	 (7003,18994,2999,4003,'2017-05-18 00:00:00.0000000',1,1),
-	 (0,33613,0,0,'2017-05-19 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,33613,0,0,'2017-05-19 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-05-20 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-05-21 00:00:00.0000000',1,1),
 	 (0,20998,5999,6997,'2017-05-22 00:00:00.0000000',1,1),
@@ -418,8 +213,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (3001,25503,0,3899,'2017-05-26 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-05-27 00:00:00.0000000',1,1),
 	 (9001,18990,0,3997,'2017-05-28 00:00:00.0000000',1,1),
-	 (0,0,0,0,'2017-05-29 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,0,0,0,'2017-05-29 00:00:00.0000000',1,1),
 	 (7998,21002,0,4600,'2017-05-30 00:00:00.0000000',1,1),
 	 (5001,24991,0,3997,'2017-05-31 00:00:00.0000000',1,1),
 	 (6603,20999,3000,3794,'2017-06-01 00:00:00.0000000',1,1),
@@ -429,8 +223,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (4999,25000,0,3999,'2017-06-05 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-06-06 00:00:00.0000000',1,1),
 	 (7003,21999,0,2995,'2017-06-07 00:00:00.0000000',1,1),
-	 (0,0,0,0,'2017-06-08 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,0,0,0,'2017-06-08 00:00:00.0000000',1,1),
 	 (0,26985,0,6498,'2017-06-09 00:00:00.0000000',1,1),
 	 (9002,16001,3900,5994,'2017-06-10 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-06-11 00:00:00.0000000',1,1),
@@ -440,8 +233,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (10999,19000,0,4002,'2017-06-15 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-06-16 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-06-17 00:00:00.0000000',1,1),
-	 (9000,16899,3002,6007,'2017-06-18 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (9000,16899,3002,6007,'2017-06-18 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-06-19 00:00:00.0000000',1,1),
 	 (0,28001,0,5607,'2017-06-20 00:00:00.0000000',1,1),
 	 (8999,19997,0,5001,'2017-06-21 00:00:00.0000000',1,1),
@@ -451,8 +243,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,0,0,0,'2017-06-25 00:00:00.0000000',1,1),
 	 (3999,29981,0,0,'2017-06-26 00:00:00.0000000',1,1),
 	 (3002,24929,0,5996,'2017-06-27 00:00:00.0000000',1,1),
-	 (9000,18991,0,6556,'2017-06-28 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (9000,18991,0,6556,'2017-06-28 00:00:00.0000000',1,1),
 	 (0,28083,0,5495,'2017-06-29 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-06-30 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-07-01 00:00:00.0000000',1,1),
@@ -462,8 +253,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (7000,20990,0,5994,'2017-07-05 00:00:00.0000000',1,1),
 	 (8999,17999,3001,4902,'2017-07-06 00:00:00.0000000',1,1),
 	 (6601,24687,0,2995,'2017-07-07 00:00:00.0000000',1,1),
-	 (0,0,0,0,'2017-07-08 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,0,0,0,'2017-07-08 00:00:00.0000000',1,1),
 	 (7002,23000,3836,0,'2017-07-09 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-07-10 00:00:00.0000000',1,1),
 	 (6999,20991,0,5994,'2017-07-11 00:00:00.0000000',1,1),
@@ -473,8 +263,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,0,0,0,'2017-07-15 00:00:00.0000000',1,1),
 	 (3999,30000,0,0,'2017-07-16 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-07-17 00:00:00.0000000',1,1),
-	 (7001,22997,0,2998,'2017-07-18 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (7001,22997,0,2998,'2017-07-18 00:00:00.0000000',1,1),
 	 (6000,20000,3000,4500,'2017-07-19 00:00:00.0000000',1,1),
 	 (12000,15986,0,6873,'2017-07-20 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-07-21 00:00:00.0000000',1,1),
@@ -484,8 +273,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,17670,0,0,'2017-07-25 00:00:00.0000000',1,1),
 	 (12003,19003,4437,0,'2017-07-26 00:00:00.0000000',1,1),
 	 (3002,24929,0,5996,'2017-07-27 00:00:00.0000000',1,1),
-	 (0,0,0,0,'2017-07-28 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,0,0,0,'2017-07-28 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-07-29 00:00:00.0000000',1,1),
 	 (6003,24993,0,3274,'2017-07-30 00:00:00.0000000',1,1),
 	 (3000,29001,0,0,'2017-07-31 00:00:00.0000000',1,1),
@@ -495,8 +283,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (4002,26998,0,2999,'2017-08-04 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-08-05 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-08-06 00:00:00.0000000',1,1),
-	 (6002,24002,0,4266,'2017-08-07 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (6002,24002,0,4266,'2017-08-07 00:00:00.0000000',1,1),
 	 (5002,24999,4700,0,'2017-08-08 00:00:00.0000000',1,1),
 	 (5000,21991,0,7002,'2017-08-09 00:00:00.0000000',1,1),
 	 (0,0,0,6201,'2017-08-10 00:00:00.0000000',1,1),
@@ -506,8 +293,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (12002,22002,0,0,'2017-08-14 00:00:00.0000000',1,1),
 	 (12000,14999,3001,5200,'2017-08-15 00:00:00.0000000',1,1),
 	 (9001,20000,0,5500,'2017-08-16 00:00:00.0000000',1,1),
-	 (0,0,0,0,'2017-08-17 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,0,0,0,'2017-08-17 00:00:00.0000000',1,1),
 	 (7000,18600,3000,6001,'2017-08-18 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-08-19 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-08-20 00:00:00.0000000',1,1),
@@ -517,8 +303,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (8863,15994,3000,7002,'2017-08-24 00:00:00.0000000',1,1),
 	 (7002,24000,0,3000,'2017-08-25 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-08-26 00:00:00.0000000',1,1),
-	 (0,26903,2997,4001,'2017-08-27 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,26903,2997,4001,'2017-08-27 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-08-28 00:00:00.0000000',1,1),
 	 (4002,27006,0,3000,'2017-08-29 00:00:00.0000000',1,1),
 	 (9667,20993,0,3996,'2017-08-30 00:00:00.0000000',1,1),
@@ -528,8 +313,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (5001,25001,0,3603,'2017-09-03 00:00:00.0000000',1,1),
 	 (0,29998,0,3601,'2017-09-04 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-09-05 00:00:00.0000000',1,1),
-	 (0,33587,0,0,'2017-09-06 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,33587,0,0,'2017-09-06 00:00:00.0000000',1,1),
 	 (8701,16497,3000,6600,'2017-09-07 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-09-08 00:00:00.0000000',1,1),
 	 (0,33593,0,0,'2017-09-09 00:00:00.0000000',1,1),
@@ -539,8 +323,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (9000,17999,0,5499,'2017-09-13 00:00:00.0000000',1,1),
 	 (12002,13996,4000,4995,'2017-09-14 00:00:00.0000000',1,1),
 	 (7003,20995,3000,3279,'2017-09-15 00:00:00.0000000',1,1),
-	 (9003,20998,0,2996,'2017-09-16 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (9003,20998,0,2996,'2017-09-16 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-09-17 00:00:00.0000000',1,1),
 	 (7002,26501,0,0,'2017-09-18 00:00:00.0000000',1,1),
 	 (0,29994,0,3595,'2017-09-19 00:00:00.0000000',1,1),
@@ -550,8 +333,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,0,0,0,'2017-09-23 00:00:00.0000000',1,1),
 	 (4003,24400,0,5008,'2017-09-24 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-09-25 00:00:00.0000000',1,1),
-	 (0,33601,0,0,'2017-09-26 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,33601,0,0,'2017-09-26 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-09-27 00:00:00.0000000',1,1),
 	 (0,26487,0,7001,'2017-09-28 00:00:00.0000000',1,1),
 	 (9006,20995,5000,0,'2017-09-29 00:00:00.0000000',1,1),
@@ -561,8 +343,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,0,0,0,'2017-10-03 00:00:00.0000000',1,1),
 	 (13000,18001,0,3199,'2017-10-04 00:00:00.0000000',1,1),
 	 (6599,21999,0,5501,'2017-10-05 00:00:00.0000000',1,1),
-	 (0,0,0,0,'2017-10-06 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,0,0,0,'2017-10-06 00:00:00.0000000',1,1),
 	 (0,27799,3000,2994,'2017-10-07 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-10-08 00:00:00.0000000',1,1),
 	 (3901,25998,0,3995,'2017-10-09 00:00:00.0000000',1,1),
@@ -572,8 +353,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (3601,27198,0,2995,'2017-10-13 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-10-14 00:00:00.0000000',1,1),
 	 (7005,20996,0,6194,'2017-10-15 00:00:00.0000000',1,1),
-	 (8500,25006,0,0,'2017-10-16 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (8500,25006,0,0,'2017-10-16 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-10-17 00:00:00.0000000',1,1),
 	 (4703,24992,0,3007,'2017-10-18 00:00:00.0000000',1,1),
 	 (9001,17699,3000,4994,'2017-10-19 00:00:00.0000000',1,1),
@@ -583,8 +363,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,0,0,0,'2017-10-22 00:00:00.0000000',1,1),
 	 (13602,16100,0,4206,'2017-10-23 00:00:00.0000000',1,1),
 	 (3503,30401,0,0,'2017-10-24 00:00:00.0000000',1,1),
-	 (5501,21001,3000,4800,'2017-10-25 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (5501,21001,3000,4800,'2017-10-25 00:00:00.0000000',1,1),
 	 (5001,29020,0,0,'2017-10-26 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-10-27 00:00:00.0000000',1,1),
 	 (3503,23298,0,7003,'2017-10-28 00:00:00.0000000',1,1),
@@ -594,8 +373,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (10000,11002,8999,4999,'2017-11-01 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-11-02 00:00:00.0000000',1,1),
 	 (3503,23986,0,4094,'2017-11-03 00:00:00.0000000',1,1),
-	 (0,0,0,0,'2017-11-04 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,0,0,0,'2017-11-04 00:00:00.0000000',1,1),
 	 (3000,25998,0,3199,'2017-11-05 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-11-06 00:00:00.0000000',1,1),
 	 (11506,17998,0,4998,'2017-11-07 00:00:00.0000000',1,1),
@@ -605,8 +383,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,0,0,0,'2017-11-11 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-11-12 00:00:00.0000000',1,1),
 	 (7800,20993,0,3997,'2017-11-13 00:00:00.0000000',1,1),
-	 (7002,26983,0,0,'2017-11-14 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (7002,26983,0,0,'2017-11-14 00:00:00.0000000',1,1),
 	 (5300,22690,0,5496,'2017-11-15 00:00:00.0000000',1,1),
 	 (0,29984,0,3096,'2017-11-16 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-11-17 00:00:00.0000000',1,1),
@@ -616,8 +393,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,0,0,0,'2017-11-21 00:00:00.0000000',1,1),
 	 (6099,27999,0,0,'2017-11-22 00:00:00.0000000',1,1),
 	 (9000,20390,0,4996,'2017-11-23 00:00:00.0000000',1,1),
-	 (5001,28485,0,0,'2017-11-24 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (5001,28485,0,0,'2017-11-24 00:00:00.0000000',1,1),
 	 (3803,20987,0,6898,'2017-11-25 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-11-26 00:00:00.0000000',1,1),
 	 (7003,20995,3600,2994,'2017-11-27 00:00:00.0000000',1,1),
@@ -627,8 +403,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,0,0,0,'2017-12-01 00:00:00.0000000',1,1),
 	 (7200,20996,0,6000,'2017-12-02 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-12-03 00:00:00.0000000',1,1),
-	 (6501,20999,3001,3998,'2017-12-04 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (6501,20999,3001,3998,'2017-12-04 00:00:00.0000000',1,1),
 	 (6602,20997,4001,2999,'2017-12-05 00:00:00.0000000',1,1),
 	 (6105,27998,0,0,'2017-12-06 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-12-07 00:00:00.0000000',1,1),
@@ -638,8 +413,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,29996,0,3399,'2017-12-11 00:00:00.0000000',1,1),
 	 (9000,20997,0,4199,'2017-12-12 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-12-13 00:00:00.0000000',1,1),
-	 (0,33496,0,0,'2017-12-14 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,33496,0,0,'2017-12-14 00:00:00.0000000',1,1),
 	 (0,29396,0,2998,'2017-12-15 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-12-16 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-12-17 00:00:00.0000000',1,1),
@@ -649,8 +423,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,27995,0,5399,'2017-12-21 00:00:00.0000000',1,1),
 	 (9000,19997,0,5400,'2017-12-22 00:00:00.0000000',1,1),
 	 (9001,20999,0,4398,'2017-12-23 00:00:00.0000000',1,1),
-	 (19800,5999,10801,0,'2017-12-24 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (19800,5999,10801,0,'2017-12-24 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-12-25 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-12-26 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2017-12-27 00:00:00.0000000',1,1),
@@ -660,8 +433,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,0,0,0,'2017-12-31 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-01-01 00:00:00.0000000',1,1),
 	 (6700,23988,0,3495,'2018-01-02 00:00:00.0000000',1,1),
-	 (0,0,0,0,'2018-01-03 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,0,0,0,'2018-01-03 00:00:00.0000000',1,1),
 	 (6500,26990,0,0,'2018-01-04 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-01-05 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-01-06 00:00:00.0000000',1,1),
@@ -671,8 +443,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (5003,25991,0,3000,'2018-01-10 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-01-11 00:00:00.0000000',1,1),
 	 (7001,27187,0,0,'2018-01-12 00:00:00.0000000',1,1),
-	 (0,26889,0,6496,'2018-01-13 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,26889,0,6496,'2018-01-13 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-01-14 00:00:00.0000000',1,1),
 	 (6600,22987,0,4498,'2018-01-15 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-01-16 00:00:00.0000000',1,1),
@@ -682,8 +453,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,27996,0,5400,'2018-01-20 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-01-21 00:00:00.0000000',1,1),
 	 (0,24997,0,8398,'2018-01-22 00:00:00.0000000',1,1),
-	 (16501,18799,0,0,'2018-01-23 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (16501,18799,0,0,'2018-01-23 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-01-24 00:00:00.0000000',1,1),
 	 (6100,22997,0,4998,'2018-01-25 00:00:00.0000000',1,1),
 	 (7000,21997,0,4200,'2018-01-26 00:00:00.0000000',1,1),
@@ -693,8 +463,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (6501,21002,3000,4000,'2018-01-30 00:00:00.0000000',1,1),
 	 (0,33475,0,0,'2018-01-31 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-02-01 00:00:00.0000000',1,1),
-	 (7000,20993,0,6196,'2018-02-02 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (7000,20993,0,6196,'2018-02-02 00:00:00.0000000',1,1),
 	 (7004,27204,0,0,'2018-02-03 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-02-04 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-02-05 00:00:00.0000000',1,1),
@@ -704,8 +473,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,33478,0,0,'2018-02-09 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-02-10 00:00:00.0000000',1,1),
 	 (12800,14992,0,6996,'2018-02-11 00:00:00.0000000',1,1),
-	 (0,0,0,0,'2018-02-12 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,0,0,0,'2018-02-12 00:00:00.0000000',1,1),
 	 (5002,25383,4000,0,'2018-02-13 00:00:00.0000000',1,1),
 	 (0,27301,0,6101,'2018-02-14 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-02-15 00:00:00.0000000',1,1),
@@ -715,8 +483,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (6001,19004,0,9000,'2018-02-19 00:00:00.0000000',1,1),
 	 (17007,12000,0,5994,'2018-02-20 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-02-21 00:00:00.0000000',1,1),
-	 (10637,20999,0,3000,'2018-02-22 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (10637,20999,0,3000,'2018-02-22 00:00:00.0000000',1,1),
 	 (0,28983,0,4475,'2018-02-23 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-02-24 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-02-25 00:00:00.0000000',1,1),
@@ -726,8 +493,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,30403,0,3000,'2018-03-01 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-03-02 00:00:00.0000000',1,1),
 	 (6002,20002,3400,4999,'2018-03-03 00:00:00.0000000',1,1),
-	 (0,0,0,0,'2018-03-04 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,0,0,0,'2018-03-04 00:00:00.0000000',1,1),
 	 (7001,19501,3000,4999,'2018-03-05 00:00:00.0000000',1,1),
 	 (7300,26986,0,0,'2018-03-06 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-03-07 00:00:00.0000000',1,1),
@@ -737,8 +503,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (11999,16001,3101,4001,'2018-03-11 00:00:00.0000000',1,1),
 	 (6003,20999,3000,4400,'2018-03-12 00:00:00.0000000',1,1),
 	 (7000,23502,0,3201,'2018-03-13 00:00:00.0000000',1,1),
-	 (0,0,0,0,'2018-03-14 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,0,0,0,'2018-03-14 00:00:00.0000000',1,1),
 	 (12006,21989,0,0,'2018-03-15 00:00:00.0000000',1,1),
 	 (6004,20994,0,6996,'2018-03-16 00:00:00.0000000',1,1),
 	 (3203,26997,0,3396,'2018-03-17 00:00:00.0000000',1,1),
@@ -748,8 +513,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,33483,0,0,'2018-03-21 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-03-22 00:00:00.0000000',1,1),
 	 (0,21005,4001,8802,'2018-03-23 00:00:00.0000000',1,1),
-	 (0,27983,0,4196,'2018-03-24 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,27983,0,4196,'2018-03-24 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-03-25 00:00:00.0000000',1,1),
 	 (3003,26990,3900,0,'2018-03-26 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-03-27 00:00:00.0000000',1,1),
@@ -759,8 +523,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,0,0,0,'2018-03-31 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-04-01 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-04-02 00:00:00.0000000',1,1),
-	 (0,27985,0,4394,'2018-04-03 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,27985,0,4394,'2018-04-03 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-04-04 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-04-05 00:00:00.0000000',1,1),
 	 (5999,23988,0,4096,'2018-04-06 00:00:00.0000000',1,1),
@@ -770,8 +533,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,0,0,0,'2018-04-10 00:00:00.0000000',1,1),
 	 (12841,16001,0,6002,'2018-04-11 00:00:00.0000000',1,1),
 	 (6502,20999,3000,4001,'2018-04-12 00:00:00.0000000',1,1),
-	 (0,33479,0,0,'2018-04-13 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,33479,0,0,'2018-04-13 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-04-14 00:00:00.0000000',1,1),
 	 (14302,12001,3501,5498,'2018-04-15 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-04-16 00:00:00.0000000',1,1),
@@ -781,8 +543,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (2999,26286,0,3996,'2018-04-20 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-04-21 00:00:00.0000000',1,1),
 	 (12001,15999,3001,3999,'2018-04-22 00:00:00.0000000',1,1),
-	 (0,0,0,0,'2018-04-23 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,0,0,0,'2018-04-23 00:00:00.0000000',1,1),
 	 (0,25000,6002,3100,'2018-04-24 00:00:00.0000000',1,1),
 	 (0,33481,0,0,'2018-04-25 00:00:00.0000000',1,1),
 	 (0,25987,0,7392,'2018-04-26 00:00:00.0000000',1,1),
@@ -792,8 +553,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (15008,19997,0,0,'2018-04-30 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-05-01 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-05-02 00:00:00.0000000',1,1),
-	 (0,0,0,0,'2018-05-03 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,0,0,0,'2018-05-03 00:00:00.0000000',1,1),
 	 (12002,19998,3102,0,'2018-05-04 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-05-05 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-05-06 00:00:00.0000000',1,1),
@@ -803,8 +563,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,0,0,0,'2018-05-10 00:00:00.0000000',1,1),
 	 (9005,20001,0,5401,'2018-05-11 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-05-12 00:00:00.0000000',1,1),
-	 (9006,19997,6100,0,'2018-05-13 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (9006,19997,6100,0,'2018-05-13 00:00:00.0000000',1,1),
 	 (0,29987,0,3395,'2018-05-14 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-05-15 00:00:00.0000000',1,1),
 	 (8904,20998,0,4495,'2018-05-16 00:00:00.0000000',1,1),
@@ -814,8 +573,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (6002,25000,0,3100,'2018-05-20 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-05-21 00:00:00.0000000',1,1),
 	 (7003,21993,0,5203,'2018-05-22 00:00:00.0000000',1,1),
-	 (7003,22192,0,4602,'2018-05-23 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (7003,22192,0,4602,'2018-05-23 00:00:00.0000000',1,1),
 	 (12002,19001,4200,0,'2018-05-24 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-05-25 00:00:00.0000000',1,1),
 	 (0,29992,0,3393,'2018-05-26 00:00:00.0000000',1,1),
@@ -825,8 +583,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (8902,22484,0,2996,'2018-05-30 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-05-31 00:00:00.0000000',1,1),
 	 (9002,22000,3900,0,'2018-06-01 00:00:00.0000000',1,1),
-	 (0,0,0,0,'2018-06-02 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,0,0,0,'2018-06-02 00:00:00.0000000',1,1),
 	 (11702,19995,0,2994,'2018-06-03 00:00:00.0000000',1,1),
 	 (9007,20996,0,4395,'2018-06-04 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-06-05 00:00:00.0000000',1,1),
@@ -836,8 +593,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (6003,27589,0,0,'2018-06-09 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-06-10 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-06-11 00:00:00.0000000',1,1),
-	 (0,27690,0,5395,'2018-06-12 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,27690,0,5395,'2018-06-12 00:00:00.0000000',1,1),
 	 (0,28005,6101,0,'2018-06-13 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-06-14 00:00:00.0000000',1,1),
 	 (0,33488,0,0,'2018-06-15 00:00:00.0000000',1,1),
@@ -847,8 +603,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (9003,20789,3000,0,'2018-06-19 00:00:00.0000000',1,1),
 	 (9005,20999,0,4394,'2018-06-20 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-06-21 00:00:00.0000000',1,1),
-	 (0,28392,0,4994,'2018-06-22 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,28392,0,4994,'2018-06-22 00:00:00.0000000',1,1),
 	 (9004,25390,0,0,'2018-06-23 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-06-24 00:00:00.0000000',1,1),
 	 (0,30843,3001,0,'2018-06-25 00:00:00.0000000',1,1),
@@ -858,8 +613,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,0,0,0,'2018-06-29 00:00:00.0000000',1,1),
 	 (5003,25998,0,2999,'2018-06-30 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-07-01 00:00:00.0000000',1,1),
-	 (9005,20498,0,4895,'2018-07-02 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (9005,20498,0,4895,'2018-07-02 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-07-03 00:00:00.0000000',1,1),
 	 (7006,27189,0,0,'2018-07-04 00:00:00.0000000',1,1),
 	 (0,30806,3002,0,'2018-07-05 00:00:00.0000000',1,1),
@@ -869,8 +623,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (7001,24001,0,3199,'2018-07-09 00:00:00.0000000',1,1),
 	 (0,28997,0,4394,'2018-07-10 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-07-11 00:00:00.0000000',1,1),
-	 (0,25004,3002,5702,'2018-07-12 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,25004,3002,5702,'2018-07-12 00:00:00.0000000',1,1),
 	 (14004,16901,0,4000,'2018-07-13 00:00:00.0000000',1,1),
 	 (0,25493,3900,3002,'2018-07-14 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-07-15 00:00:00.0000000',1,1),
@@ -880,8 +633,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (10602,21002,0,2995,'2018-07-19 00:00:00.0000000',1,1),
 	 (11703,22998,0,0,'2018-07-20 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-07-21 00:00:00.0000000',1,1),
-	 (0,0,0,0,'2018-07-22 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,0,0,0,'2018-07-22 00:00:00.0000000',1,1),
 	 (0,28605,0,4400,'2018-07-23 00:00:00.0000000',1,1),
 	 (10603,20992,0,3004,'2018-07-24 00:00:00.0000000',1,1),
 	 (0,17993,0,0,'2018-07-25 00:00:00.0000000',1,1),
@@ -891,8 +643,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,0,0,0,'2018-07-29 00:00:00.0000000',1,1),
 	 (0,27997,6103,0,'2018-07-30 00:00:00.0000000',1,1),
 	 (6003,23997,0,4099,'2018-07-31 00:00:00.0000000',1,1),
-	 (7002,23001,0,4194,'2018-08-01 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (7002,23001,0,4194,'2018-08-01 00:00:00.0000000',1,1),
 	 (14006,20997,0,0,'2018-08-02 00:00:00.0000000',1,1),
 	 (6003,24098,0,3995,'2018-08-03 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-08-04 00:00:00.0000000',1,1),
@@ -902,8 +653,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,26102,0,5700,'2018-08-08 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-08-09 00:00:00.0000000',1,1),
 	 (9004,17995,3501,4295,'2018-08-10 00:00:00.0000000',1,1),
-	 (5003,26001,0,3000,'2018-08-11 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (5003,26001,0,3000,'2018-08-11 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-08-12 00:00:00.0000000',1,1),
 	 (7002,23407,0,3831,'2018-08-13 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-08-14 00:00:00.0000000',1,1),
@@ -913,8 +663,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (10638,21003,0,2999,'2018-08-18 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-08-19 00:00:00.0000000',1,1),
 	 (0,19500,0,0,'2018-08-20 00:00:00.0000000',1,1),
-	 (6002,24996,0,3095,'2018-08-21 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (6002,24996,0,3095,'2018-08-21 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-08-22 00:00:00.0000000',1,1),
 	 (6501,20999,3002,4000,'2018-08-23 00:00:00.0000000',1,1),
 	 (0,18991,0,0,'2018-08-24 00:00:00.0000000',1,1),
@@ -924,8 +673,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (3903,20997,0,0,'2018-08-28 00:00:00.0000000',1,1),
 	 (0,20997,0,0,'2018-08-29 00:00:00.0000000',1,1),
 	 (7001,23498,0,3199,'2018-08-30 00:00:00.0000000',1,1),
-	 (8901,21998,0,3499,'2018-08-31 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (8901,21998,0,3499,'2018-08-31 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-09-01 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-09-02 00:00:00.0000000',1,1),
 	 (6502,20999,4001,2999,'2018-09-03 00:00:00.0000000',1,1),
@@ -935,8 +683,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,21501,0,0,'2018-09-07 00:00:00.0000000',1,1),
 	 (8732,17995,3000,4995,'2018-09-08 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-09-09 00:00:00.0000000',1,1),
-	 (9002,18774,3002,3902,'2018-09-10 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (9002,18774,3002,3902,'2018-09-10 00:00:00.0000000',1,1),
 	 (0,19707,0,0,'2018-09-11 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-09-12 00:00:00.0000000',1,1),
 	 (3038,25001,0,5499,'2018-09-13 00:00:00.0000000',1,1),
@@ -946,8 +693,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (7505,26998,0,0,'2018-09-17 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-09-18 00:00:00.0000000',1,1),
 	 (6002,23993,0,4295,'2018-09-19 00:00:00.0000000',1,1),
-	 (0,17003,0,0,'2018-09-20 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,17003,0,0,'2018-09-20 00:00:00.0000000',1,1),
 	 (7003,19993,3000,4695,'2018-09-21 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-09-22 00:00:00.0000000',1,1),
 	 (10502,21002,0,3303,'2018-09-23 00:00:00.0000000',1,1),
@@ -957,8 +703,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,0,0,0,'2018-09-27 00:00:00.0000000',1,1),
 	 (6903,22998,0,4497,'2018-09-28 00:00:00.0000000',1,1),
 	 (9001,22104,0,3201,'2018-09-29 00:00:00.0000000',1,1),
-	 (0,33682,0,0,'2018-10-01 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,33682,0,0,'2018-10-01 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-10-02 00:00:00.0000000',1,1),
 	 (10200,20001,4001,0,'2018-10-03 00:00:00.0000000',1,1),
 	 (0,28998,0,4701,'2018-10-04 00:00:00.0000000',1,1),
@@ -968,8 +713,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,19998,0,0,'2018-10-08 00:00:00.0000000',1,1),
 	 (0,33702,0,0,'2018-10-09 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-10-10 00:00:00.0000000',1,1),
-	 (8703,18200,3000,4999,'2018-10-11 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (8703,18200,3000,4999,'2018-10-11 00:00:00.0000000',1,1),
 	 (0,29998,0,3700,'2018-10-12 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-10-13 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-10-14 00:00:00.0000000',1,1),
@@ -979,8 +723,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,30701,0,2999,'2018-10-18 00:00:00.0000000',1,1),
 	 (0,0,0,0,'2018-10-19 00:00:00.0000000',1,1),
 	 (7000,20999,3001,3701,'2018-10-20 00:00:00.0000000',1,1),
-	 (0,0,0,0,'2018-10-21 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,0,0,0,'2018-10-21 00:00:00.0000000',1,1),
 	 (12001,17997,0,4899,'2018-10-22 00:00:00.0000000',1,1),
 	 (12003,15998,4001,3299,'2018-10-23 00:00:00.0000000',1,1),
 	 (7002,20998,3001,3700,'2018-10-24 00:00:00.0000000',1,1),
@@ -991,7 +734,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,17996,0,0,'2018-10-29 00:00:00.0000000',1,1),
 	 (10799,19988,0,3994,'2018-10-30 00:00:00.0000000',1,1),
 	 (8702,22893,0,2995,'2018-10-31 00:00:00.0000000',1,1);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+INSERT INTO Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
 	 (4000,29705,0,0,'2016-11-01 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2016-11-02 00:00:00.0000000',1,2),
 	 (3000,30900,0,0,'2016-11-03 00:00:00.0000000',1,2),
@@ -1001,8 +744,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,33601,0,0,'2016-11-07 00:00:00.0000000',1,2),
 	 (3001,30904,0,0,'2016-11-08 00:00:00.0000000',1,2),
 	 (7000,26002,0,0,'2016-11-09 00:00:00.0000000',1,2),
-	 (0,14203,0,7001,'2016-11-10 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,14203,0,7001,'2016-11-10 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2016-11-11 00:00:00.0000000',1,2),
 	 (0,12003,0,6001,'2016-11-12 00:00:00.0000000',1,2),
 	 (0,9001,0,7000,'2016-11-13 00:00:00.0000000',1,2),
@@ -1012,8 +754,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (7800,25001,0,0,'2016-11-17 00:00:00.0000000',1,2),
 	 (0,17003,0,0,'2016-11-18 00:00:00.0000000',1,2),
 	 (9000,21000,0,4584,'2016-11-19 00:00:00.0000000',1,2),
-	 (3000,18001,0,0,'2016-11-20 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (3000,18001,0,0,'2016-11-20 00:00:00.0000000',1,2),
 	 (0,17003,0,0,'2016-11-21 00:00:00.0000000',1,2),
 	 (9000,25001,0,0,'2016-11-22 00:00:00.0000000',1,2),
 	 (3001,30903,0,0,'2016-11-23 00:00:00.0000000',1,2),
@@ -1023,8 +764,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,22004,7000,5002,'2016-11-27 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2016-11-28 00:00:00.0000000',1,2),
 	 (6000,22001,6000,0,'2016-11-29 00:00:00.0000000',1,2),
-	 (30002,0,6000,0,'2016-11-29 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (30002,0,6000,0,'2016-11-29 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2016-11-30 00:00:00.0000000',1,2),
 	 (5001,25001,0,4001,'2016-12-01 00:00:00.0000000',1,2),
 	 (3000,27002,0,3502,'2016-12-02 00:00:00.0000000',1,2),
@@ -1034,8 +774,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (4000,27002,2999,0,'2016-12-06 00:00:00.0000000',1,2),
 	 (7000,18001,3002,5000,'2016-12-07 00:00:00.0000000',1,2),
 	 (4000,28002,0,0,'2016-12-08 00:00:00.0000000',1,2),
-	 (0,30002,4002,0,'2016-12-09 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,30002,4002,0,'2016-12-09 00:00:00.0000000',1,2),
 	 (0,16001,0,0,'2016-12-10 00:00:00.0000000',1,2),
 	 (7001,27004,0,0,'2016-12-11 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2016-12-12 00:00:00.0000000',1,2),
@@ -1045,8 +784,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,21004,6000,7001,'2016-12-16 00:00:00.0000000',1,2),
 	 (4000,29501,0,0,'2016-12-17 00:00:00.0000000',1,2),
 	 (9001,17502,0,6002,'2016-12-18 00:00:00.0000000',1,2),
-	 (0,0,0,0,'2016-12-19 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,0,0,0,'2016-12-19 00:00:00.0000000',1,2),
 	 (3000,29305,0,0,'2016-12-20 00:00:00.0000000',1,2),
 	 (4115,30001,0,0,'2016-12-21 00:00:00.0000000',1,2),
 	 (6001,23004,0,5000,'2016-12-22 00:00:00.0000000',1,2),
@@ -1056,8 +794,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,0,0,0,'2016-12-26 00:00:00.0000000',1,2),
 	 (10700,9001,7001,6000,'2016-12-27 00:00:00.0000000',1,2),
 	 (0,20003,0,0,'2016-12-28 00:00:00.0000000',1,2),
-	 (0,0,0,0,'2016-12-29 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,0,0,0,'2016-12-29 00:00:00.0000000',1,2),
 	 (9000,22502,0,3000,'2016-12-30 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2016-12-31 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-01-01 00:00:00.0000000',1,2),
@@ -1067,8 +804,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (7000,22366,0,5001,'2017-01-05 00:00:00.0000000',1,2),
 	 (0,11999,0,0,'2017-01-06 00:00:00.0000000',1,2),
 	 (9000,15004,0,5501,'2017-01-07 00:00:00.0000000',1,2),
-	 (0,0,0,0,'2017-01-08 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,0,0,0,'2017-01-08 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-01-09 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-01-10 00:00:00.0000000',1,2),
 	 (12000,0,7003,16302,'2017-01-11 00:00:00.0000000',1,2),
@@ -1078,8 +814,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,0,0,0,'2017-01-15 00:00:00.0000000',1,2),
 	 (6499,12000,2999,12000,'2017-01-16 00:00:00.0000000',1,2),
 	 (0,12997,0,20433,'2017-01-17 00:00:00.0000000',1,2),
-	 (0,13401,0,17402,'2017-01-18 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,13401,0,17402,'2017-01-18 00:00:00.0000000',1,2),
 	 (10600,11999,0,12001,'2017-01-19 00:00:00.0000000',1,2),
 	 (4000,12001,3000,14001,'2017-01-20 00:00:00.0000000',1,2),
 	 (3901,14598,0,14600,'2017-01-21 00:00:00.0000000',1,2),
@@ -1089,8 +824,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (3916,15000,0,15001,'2017-01-25 00:00:00.0000000',1,2),
 	 (4501,25989,0,3501,'2017-01-26 00:00:00.0000000',1,2),
 	 (0,14998,0,18456,'2017-01-27 00:00:00.0000000',1,2),
-	 (9000,13001,0,11999,'2017-01-28 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (9000,13001,0,11999,'2017-01-28 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-01-29 00:00:00.0000000',1,2),
 	 (9000,11001,6000,9000,'2017-01-30 00:00:00.0000000',1,2),
 	 (0,30602,0,3000,'2017-01-31 00:00:00.0000000',1,2),
@@ -1100,8 +834,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (7001,20201,0,3000,'2017-02-04 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-02-05 00:00:00.0000000',1,2),
 	 (7100,17002,4302,5001,'2017-02-06 00:00:00.0000000',1,2),
-	 (0,31701,0,0,'2017-02-07 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,31701,0,0,'2017-02-07 00:00:00.0000000',1,2),
 	 (4001,30001,0,0,'2017-02-08 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-02-09 00:00:00.0000000',1,2),
 	 (3000,30905,0,0,'2017-02-10 00:00:00.0000000',1,2),
@@ -1111,8 +844,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (9000,25008,0,0,'2017-02-14 00:00:00.0000000',1,2),
 	 (6238,17002,0,9001,'2017-02-15 00:00:00.0000000',1,2),
 	 (4000,12404,0,0,'2017-02-16 00:00:00.0000000',1,2),
-	 (0,17004,0,0,'2017-02-17 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,17004,0,0,'2017-02-17 00:00:00.0000000',1,2),
 	 (7001,24003,0,0,'2017-02-18 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-02-19 00:00:00.0000000',1,2),
 	 (8900,12001,5003,9103,'2017-02-20 00:00:00.0000000',1,2),
@@ -1122,8 +854,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (10001,24002,0,0,'2017-02-24 00:00:00.0000000',1,2),
 	 (0,30004,0,0,'2017-02-25 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-02-26 00:00:00.0000000',1,2),
-	 (11601,23303,0,0,'2017-02-27 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (11601,23303,0,0,'2017-02-27 00:00:00.0000000',1,2),
 	 (4000,30004,0,0,'2017-02-28 00:00:00.0000000',1,2),
 	 (6000,21001,0,7000,'2017-03-01 00:00:00.0000000',1,2),
 	 (6000,27006,0,0,'2017-03-02 00:00:00.0000000',1,2),
@@ -1133,8 +864,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (7000,20000,3002,4001,'2017-03-06 00:00:00.0000000',1,2),
 	 (3601,29402,0,0,'2017-03-07 00:00:00.0000000',1,2),
 	 (7000,22000,3801,0,'2017-03-08 00:00:00.0000000',1,2),
-	 (5001,27005,0,0,'2017-03-09 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (5001,27005,0,0,'2017-03-09 00:00:00.0000000',1,2),
 	 (3000,26903,0,4001,'2017-03-10 00:00:00.0000000',1,2),
 	 (0,27003,0,6501,'2017-03-11 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-03-12 00:00:00.0000000',1,2),
@@ -1144,8 +874,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (7000,27003,0,0,'2017-03-16 00:00:00.0000000',1,2),
 	 (5999,27002,0,0,'2017-03-17 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-03-18 00:00:00.0000000',1,2),
-	 (0,0,0,0,'2017-03-19 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,0,0,0,'2017-03-19 00:00:00.0000000',1,2),
 	 (9001,23003,0,0,'2017-03-20 00:00:00.0000000',1,2),
 	 (9001,20002,5002,0,'2017-03-21 00:00:00.0000000',1,2),
 	 (5001,28002,0,0,'2017-03-22 00:00:00.0000000',1,2),
@@ -1155,8 +884,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (6000,23001,0,5001,'2017-03-26 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-03-27 00:00:00.0000000',1,2),
 	 (0,26899,3001,4001,'2017-03-28 00:00:00.0000000',1,2),
-	 (0,0,0,0,'2017-03-29 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,0,0,0,'2017-03-29 00:00:00.0000000',1,2),
 	 (8999,22962,3002,0,'2017-03-30 00:00:00.0000000',1,2),
 	 (0,28004,0,5609,'2017-03-31 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-04-01 00:00:00.0000000',1,2),
@@ -1166,8 +894,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (4000,27504,0,0,'2017-04-05 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-04-06 00:00:00.0000000',1,2),
 	 (6999,22500,3836,0,'2017-04-07 00:00:00.0000000',1,2),
-	 (0,0,0,0,'2017-04-08 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,0,0,0,'2017-04-08 00:00:00.0000000',1,2),
 	 (9001,12001,4001,9001,'2017-04-09 00:00:00.0000000',1,2),
 	 (4001,30004,0,0,'2017-04-10 00:00:00.0000000',1,2),
 	 (6001,24003,0,3001,'2017-04-11 00:00:00.0000000',1,2),
@@ -1177,8 +904,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,0,0,0,'2017-04-15 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-04-16 00:00:00.0000000',1,2),
 	 (12000,10000,2999,6999,'2017-04-17 00:00:00.0000000',1,2),
-	 (7000,23001,3999,0,'2017-04-18 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (7000,23001,3999,0,'2017-04-18 00:00:00.0000000',1,2),
 	 (0,28618,0,5001,'2017-04-19 00:00:00.0000000',1,2),
 	 (0,15999,0,0,'2017-04-20 00:00:00.0000000',1,2),
 	 (0,22005,0,0,'2017-04-21 00:00:00.0000000',1,2),
@@ -1188,8 +914,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (6000,24998,3000,0,'2017-04-25 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-04-26 00:00:00.0000000',1,2),
 	 (0,25002,3000,5925,'2017-04-27 00:00:00.0000000',1,2),
-	 (4002,30003,0,0,'2017-04-28 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (4002,30003,0,0,'2017-04-28 00:00:00.0000000',1,2),
 	 (0,16641,0,0,'2017-04-29 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-04-30 00:00:00.0000000',1,2),
 	 (9001,22606,0,3001,'2017-05-02 00:00:00.0000000',1,2),
@@ -1199,8 +924,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (6001,28002,0,0,'2017-05-06 00:00:00.0000000',1,2),
 	 (7000,18677,3001,6001,'2017-05-07 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-05-08 00:00:00.0000000',1,2),
-	 (9001,22002,0,3001,'2017-05-09 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (9001,22002,0,3001,'2017-05-09 00:00:00.0000000',1,2),
 	 (4001,30002,0,0,'2017-05-10 00:00:00.0000000',1,2),
 	 (0,310597,0,0,'2017-05-11 00:00:00.0000000',1,2),
 	 (6000,25003,0,3002,'2017-05-12 00:00:00.0000000',1,2),
@@ -1210,8 +934,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,33604,0,0,'2017-05-16 00:00:00.0000000',1,2),
 	 (3999,27001,0,0,'2017-05-17 00:00:00.0000000',1,2),
 	 (4000,30003,0,0,'2017-05-18 00:00:00.0000000',1,2),
-	 (8999,24999,0,0,'2017-05-19 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (8999,24999,0,0,'2017-05-19 00:00:00.0000000',1,2),
 	 (11501,19002,0,0,'2017-05-20 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-05-21 00:00:00.0000000',1,2),
 	 (4001,26001,0,3000,'2017-05-22 00:00:00.0000000',1,2),
@@ -1221,8 +944,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (4000,26999,3000,0,'2017-05-26 00:00:00.0000000',1,2),
 	 (12000,14002,0,8001,'2017-05-27 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-05-28 00:00:00.0000000',1,2),
-	 (0,26902,3000,4000,'2017-05-29 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,26902,3000,4000,'2017-05-29 00:00:00.0000000',1,2),
 	 (0,32004,0,0,'2017-05-30 00:00:00.0000000',1,2),
 	 (4000,27000,3000,0,'2017-05-31 00:00:00.0000000',1,2),
 	 (5001,29003,0,0,'2017-06-01 00:00:00.0000000',1,2),
@@ -1232,8 +954,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (4001,28002,0,0,'2017-06-05 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-06-06 00:00:00.0000000',1,2),
 	 (3999,26801,2999,0,'2017-06-07 00:00:00.0000000',1,2),
-	 (9000,24475,0,0,'2017-06-08 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (9000,24475,0,0,'2017-06-08 00:00:00.0000000',1,2),
 	 (0,25000,4000,5000,'2017-06-09 00:00:00.0000000',1,2),
 	 (4000,30003,0,0,'2017-06-10 00:00:00.0000000',1,2),
 	 (11000,16000,3000,5001,'2017-06-11 00:00:00.0000000',1,2),
@@ -1243,8 +964,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (6000,21001,0,7001,'2017-06-15 00:00:00.0000000',1,2),
 	 (0,20000,5000,9000,'2017-06-16 00:00:00.0000000',1,2),
 	 (5837,15001,0,0,'2017-06-17 00:00:00.0000000',1,2),
-	 (11918,19101,0,3000,'2017-06-18 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (11918,19101,0,3000,'2017-06-18 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-06-19 00:00:00.0000000',1,2),
 	 (0,21675,0,0,'2017-06-20 00:00:00.0000000',1,2),
 	 (0,33603,0,0,'2017-06-21 00:00:00.0000000',1,2),
@@ -1254,8 +974,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (4001,22701,0,6000,'2017-06-25 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-06-26 00:00:00.0000000',1,2),
 	 (4000,29599,0,0,'2017-06-27 00:00:00.0000000',1,2),
-	 (9000,21000,0,4584,'2017-06-28 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (9000,21000,0,4584,'2017-06-28 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-06-29 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-06-30 00:00:00.0000000',1,2),
 	 (0,12000,9001,13002,'2017-07-01 00:00:00.0000000',1,2),
@@ -1265,9 +984,8 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (5000,25001,0,4000,'2017-07-05 00:00:00.0000000',1,2),
 	 (0,31502,0,0,'2017-07-06 00:00:00.0000000',1,2),
 	 (7002,23002,0,0,'2017-07-07 00:00:00.0000000',1,2),
-	 (0,0,0,0,'2017-07-08 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
-	 (12000,15902,0,4903,'2017-07-09 00:00:00.0000000',1,2),
+	 (0,0,0,0,'2017-07-08 00:00:00.0000000',1,2),
+  	 (12000,15902,0,4903,'2017-07-09 00:00:00.0000000',1,2),
 	 (4001,17000,9002,5000,'2017-07-10 00:00:00.0000000',1,2),
 	 (4001,30002,0,0,'2017-07-11 00:00:00.0000000',1,2),
 	 (9003,24976,0,0,'2017-07-12 00:00:00.0000000',1,2),
@@ -1276,8 +994,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (4001,27502,0,0,'2017-07-15 00:00:00.0000000',1,2),
 	 (11000,18700,0,0,'2017-07-16 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-07-17 00:00:00.0000000',1,2),
-	 (4000,27001,0,3000,'2017-07-18 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (4000,27001,0,3000,'2017-07-18 00:00:00.0000000',1,2),
 	 (3262,21002,3001,7001,'2017-07-19 00:00:00.0000000',1,2),
 	 (6001,28002,0,0,'2017-07-20 00:00:00.0000000',1,2),
 	 (6600,19001,3000,6000,'2017-07-21 00:00:00.0000000',1,2),
@@ -1287,8 +1004,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,0,0,0,'2017-07-25 00:00:00.0000000',1,2),
 	 (7001,27001,0,0,'2017-07-26 00:00:00.0000000',1,2),
 	 (9000,21004,0,4584,'2017-07-27 00:00:00.0000000',1,2),
-	 (4007,29999,0,0,'2017-07-28 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (4007,29999,0,0,'2017-07-28 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-07-29 00:00:00.0000000',1,2),
 	 (14002,17400,0,0,'2017-07-30 00:00:00.0000000',1,2),
 	 (5000,16999,3001,7000,'2017-07-31 00:00:00.0000000',1,2),
@@ -1298,8 +1014,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,0,0,0,'2017-08-04 00:00:00.0000000',1,2),
 	 (9000,25001,0,0,'2017-08-05 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-08-06 00:00:00.0000000',1,2),
-	 (0,0,0,0,'2017-08-07 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,0,0,0,'2017-08-07 00:00:00.0000000',1,2),
 	 (4001,30000,0,0,'2017-08-08 00:00:00.0000000',1,2),
 	 (9000,12001,6001,7001,'2017-08-09 00:00:00.0000000',1,2),
 	 (0,0,0,6201,'2017-08-10 00:00:00.0000000',1,2),
@@ -1309,8 +1024,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (11900,20002,0,3001,'2017-08-14 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-08-15 00:00:00.0000000',1,2),
 	 (6999,20001,3899,3001,'2017-08-16 00:00:00.0000000',1,2),
-	 (4000,30001,0,0,'2017-08-17 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (4000,30001,0,0,'2017-08-17 00:00:00.0000000',1,2),
 	 (0,33604,0,0,'2017-08-18 00:00:00.0000000',1,2),
 	 (9002,21003,0,4585,'2017-08-19 00:00:00.0000000',1,2),
 	 (12002,18001,0,4001,'2017-08-20 00:00:00.0000000',1,2),
@@ -1320,8 +1034,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,0,0,0,'2017-08-24 00:00:00.0000000',1,2),
 	 (6000,22999,0,4000,'2017-08-25 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-08-26 00:00:00.0000000',1,2),
-	 (7001,21002,0,5999,'2017-08-27 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (7001,21002,0,5999,'2017-08-27 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-08-28 00:00:00.0000000',1,2),
 	 (4000,30002,0,0,'2017-08-29 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-08-30 00:00:00.0000000',1,2),
@@ -1331,8 +1044,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (7001,23602,0,0,'2017-09-03 00:00:00.0000000',1,2),
 	 (0,23902,3002,0,'2017-09-04 00:00:00.0000000',1,2),
 	 (12000,22904,0,0,'2017-09-05 00:00:00.0000000',1,2),
-	 (5000,27003,0,0,'2017-09-06 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (5000,27003,0,0,'2017-09-06 00:00:00.0000000',1,2),
 	 (5001,26002,3502,0,'2017-09-07 00:00:00.0000000',1,2),
 	 (5001,25003,0,3001,'2017-09-08 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-09-09 00:00:00.0000000',1,2),
@@ -1342,8 +1054,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (7001,26503,0,0,'2017-09-13 00:00:00.0000000',1,2),
 	 (5000,23001,0,4001,'2017-09-14 00:00:00.0000000',1,2),
 	 (5000,25003,4001,0,'2017-09-15 00:00:00.0000000',1,2),
-	 (9001,18001,0,7000,'2017-09-16 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (9001,18001,0,7000,'2017-09-16 00:00:00.0000000',1,2),
 	 (7000,10001,6001,11902,'2017-09-17 00:00:00.0000000',1,2),
 	 (0,33603,0,0,'2017-09-18 00:00:00.0000000',1,2),
 	 (7000,27004,0,0,'2017-09-19 00:00:00.0000000',1,2),
@@ -1353,8 +1064,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,0,0,0,'2017-09-23 00:00:00.0000000',1,2),
 	 (0,31504,0,0,'2017-09-24 00:00:00.0000000',1,2),
 	 (3000,28003,0,0,'2017-09-25 00:00:00.0000000',1,2),
-	 (0,23003,0,9502,'2017-09-26 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,23003,0,9502,'2017-09-26 00:00:00.0000000',1,2),
 	 (9000,25602,0,0,'2017-09-27 00:00:00.0000000',1,2),
 	 (13999,21002,0,0,'2017-09-28 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-09-29 00:00:00.0000000',1,2),
@@ -1364,8 +1074,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (7000,27002,0,0,'2017-10-03 00:00:00.0000000',1,2),
 	 (6000,23001,2999,0,'2017-10-04 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-10-05 00:00:00.0000000',1,2),
-	 (3500,30404,0,0,'2017-10-06 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (3500,30404,0,0,'2017-10-06 00:00:00.0000000',1,2),
 	 (9000,18002,0,7000,'2017-10-07 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-10-08 00:00:00.0000000',1,2),
 	 (5001,21002,4001,3401,'2017-10-09 00:00:00.0000000',1,2),
@@ -1375,8 +1084,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (6001,22602,0,3001,'2017-10-13 00:00:00.0000000',1,2),
 	 (7001,18501,3001,6001,'2017-10-14 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-10-15 00:00:00.0000000',1,2),
-	 (0,33505,0,0,'2017-10-16 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,33505,0,0,'2017-10-16 00:00:00.0000000',1,2),
 	 (12000,22803,0,0,'2017-10-17 00:00:00.0000000',1,2),
 	 (6001,22002,0,6100,'2017-10-18 00:00:00.0000000',1,2),
 	 (3001,30801,0,0,'2017-10-19 00:00:00.0000000',1,2),
@@ -1386,8 +1094,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (6001,24105,0,4001,'2017-10-23 00:00:00.0000000',1,2),
 	 (0,30407,0,3001,'2017-10-24 00:00:00.0000000',1,2),
 	 (6000,25001,0,3002,'2017-10-25 00:00:00.0000000',1,2),
-	 (7000,27000,0,0,'2017-10-26 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (7000,27000,0,0,'2017-10-26 00:00:00.0000000',1,2),
 	 (7001,24601,3001,0,'2017-10-27 00:00:00.0000000',1,2),
 	 (7002,22006,0,5000,'2017-10-28 00:00:00.0000000',1,2),
 	 (10101,23806,0,0,'2017-10-29 00:00:00.0000000',1,2),
@@ -1397,8 +1104,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,25003,3001,5702,'2017-11-02 00:00:00.0000000',1,2),
 	 (14001,21003,0,0,'2017-11-03 00:00:00.0000000',1,2),
 	 (4999,23001,0,4000,'2017-11-04 00:00:00.0000000',1,2),
-	 (12101,20003,0,0,'2017-11-05 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (12101,20003,0,0,'2017-11-05 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-11-06 00:00:00.0000000',1,2),
 	 (0,33505,0,0,'2017-11-07 00:00:00.0000000',1,2),
 	 (4001,25002,0,4903,'2017-11-08 00:00:00.0000000',1,2),
@@ -1408,8 +1114,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,0,0,0,'2017-11-12 00:00:00.0000000',1,2),
 	 (0,25002,3001,5784,'2017-11-13 00:00:00.0000000',1,2),
 	 (6001,21003,0,5001,'2017-11-14 00:00:00.0000000',1,2),
-	 (5000,25003,0,4000,'2017-11-15 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (5000,25003,0,4000,'2017-11-15 00:00:00.0000000',1,2),
 	 (3957,30004,0,0,'2017-11-16 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-11-17 00:00:00.0000000',1,2),
 	 (9005,25000,0,0,'2017-11-18 00:00:00.0000000',1,2),
@@ -1419,8 +1124,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (3916,27003,0,3001,'2017-11-22 00:00:00.0000000',1,2),
 	 (7000,27005,0,0,'2017-11-23 00:00:00.0000000',1,2),
 	 (4001,24602,0,5001,'2017-11-24 00:00:00.0000000',1,2),
-	 (0,0,0,0,'2017-11-25 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,0,0,0,'2017-11-25 00:00:00.0000000',1,2),
 	 (6999,21001,3000,3200,'2017-11-26 00:00:00.0000000',1,2),
 	 (5000,25003,3001,0,'2017-11-27 00:00:00.0000000',1,2),
 	 (3001,26806,0,4001,'2017-11-28 00:00:00.0000000',1,2),
@@ -1430,8 +1134,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (5500,16002,5001,8001,'2017-12-02 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-12-03 00:00:00.0000000',1,2),
 	 (0,14003,0,0,'2017-12-04 00:00:00.0000000',1,2),
-	 (0,12004,0,0,'2017-12-05 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,12004,0,0,'2017-12-05 00:00:00.0000000',1,2),
 	 (6001,21007,0,3000,'2017-12-06 00:00:00.0000000',1,2),
 	 (0,22004,0,0,'2017-12-07 00:00:00.0000000',1,2),
 	 (0,17002,0,0,'2017-12-08 00:00:00.0000000',1,2),
@@ -1441,8 +1144,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (7000,23000,0,4000,'2017-12-12 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-12-13 00:00:00.0000000',1,2),
 	 (4000,29964,0,0,'2017-12-14 00:00:00.0000000',1,2),
-	 (4001,28504,0,0,'2017-12-15 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (4001,28504,0,0,'2017-12-15 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-12-16 00:00:00.0000000',1,2),
 	 (4001,21003,0,8856,'2017-12-17 00:00:00.0000000',1,2),
 	 (0,26003,4000,3001,'2017-12-18 00:00:00.0000000',1,2),
@@ -1452,8 +1154,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (5001,28803,0,0,'2017-12-22 00:00:00.0000000',1,2),
 	 (13000,7001,5002,10338,'2017-12-23 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-12-24 00:00:00.0000000',1,2),
-	 (0,0,0,0,'2017-12-25 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,0,0,0,'2017-12-25 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-12-26 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2017-12-27 00:00:00.0000000',1,2),
 	 (14002,21003,0,0,'2017-12-28 00:00:00.0000000',1,2),
@@ -1463,8 +1164,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,0,0,0,'2018-01-01 00:00:00.0000000',1,2),
 	 (9001,20976,0,4447,'2018-01-02 00:00:00.0000000',1,2),
 	 (9000,21002,5038,0,'2018-01-03 00:00:00.0000000',1,2),
-	 (0,21749,3001,9001,'2018-01-04 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,21749,3001,9001,'2018-01-04 00:00:00.0000000',1,2),
 	 (7000,27286,0,0,'2018-01-05 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2018-01-06 00:00:00.0000000',1,2),
 	 (7002,20991,0,6001,'2018-01-07 00:00:00.0000000',1,2),
@@ -1474,8 +1174,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (5001,28005,0,0,'2018-01-11 00:00:00.0000000',1,2),
 	 (5000,25005,0,4003,'2018-01-12 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2018-01-13 00:00:00.0000000',1,2),
-	 (0,0,0,0,'2018-01-14 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,0,0,0,'2018-01-14 00:00:00.0000000',1,2),
 	 (7502,26002,0,0,'2018-01-15 00:00:00.0000000',1,2),
 	 (0,25003,9002,0,'2018-01-16 00:00:00.0000000',1,2),
 	 (3837,21003,0,9001,'2018-01-17 00:00:00.0000000',1,2),
@@ -1485,8 +1184,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (7000,14501,3000,9001,'2018-01-21 00:00:00.0000000',1,2),
 	 (9002,25499,0,0,'2018-01-22 00:00:00.0000000',1,2),
 	 (6157,25003,0,3000,'2018-01-23 00:00:00.0000000',1,2),
-	 (4000,26929,0,3001,'2018-01-24 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (4000,26929,0,3001,'2018-01-24 00:00:00.0000000',1,2),
 	 (3956,30002,0,0,'2018-01-25 00:00:00.0000000',1,2),
 	 (4000,26502,0,3421,'2018-01-26 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2018-01-27 00:00:00.0000000',1,2),
@@ -1496,8 +1194,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (4000,26003,0,3901,'2018-01-31 00:00:00.0000000',1,2),
 	 (4001,26003,0,3914,'2018-02-01 00:00:00.0000000',1,2),
 	 (0,26926,4002,3001,'2018-02-02 00:00:00.0000000',1,2),
-	 (9000,24479,0,0,'2018-02-03 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (9000,24479,0,0,'2018-02-03 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2018-02-04 00:00:00.0000000',1,2),
 	 (7001,23005,0,4001,'2018-02-05 00:00:00.0000000',1,2),
 	 (5601,21000,4402,3137,'2018-02-06 00:00:00.0000000',1,2),
@@ -1507,8 +1204,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (7001,23003,3502,0,'2018-02-10 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2018-02-11 00:00:00.0000000',1,2),
 	 (6001,24002,0,3101,'2018-02-12 00:00:00.0000000',1,2),
-	 (5000,25006,0,4001,'2018-02-13 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (5000,25006,0,4001,'2018-02-13 00:00:00.0000000',1,2),
 	 (4001,29964,0,0,'2018-02-14 00:00:00.0000000',1,2),
 	 (4000,25504,0,3001,'2018-02-15 00:00:00.0000000',1,2),
 	 (0,29007,4000,0,'2018-02-16 00:00:00.0000000',1,2),
@@ -1518,8 +1214,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (9000,20004,0,5000,'2018-02-20 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2018-02-21 00:00:00.0000000',1,2),
 	 (5001,25498,4002,0,'2018-02-22 00:00:00.0000000',1,2),
-	 (3999,25403,0,4501,'2018-02-23 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (3999,25403,0,4501,'2018-02-23 00:00:00.0000000',1,2),
 	 (5300,20303,3002,5001,'2018-02-24 00:00:00.0000000',1,2),
 	 (0,18004,0,0,'2018-02-25 00:00:00.0000000',1,2),
 	 (10500,11002,0,11001,'2018-02-26 00:00:00.0000000',1,2),
@@ -1529,8 +1224,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (3757,14999,0,15003,'2018-03-02 00:00:00.0000000',1,2),
 	 (9000,12002,0,12000,'2018-03-03 00:00:00.0000000',1,2),
 	 (12000,5001,6001,9001,'2018-03-04 00:00:00.0000000',1,2),
-	 (0,0,0,0,'2018-03-05 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,0,0,0,'2018-03-05 00:00:00.0000000',1,2),
 	 (4000,26003,0,3900,'2018-03-06 00:00:00.0000000',1,2),
 	 (0,26004,0,7444,'2018-03-07 00:00:00.0000000',1,2),
 	 (5000,25001,0,3999,'2018-03-08 00:00:00.0000000',1,2),
@@ -1540,8 +1234,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (5000,21004,3000,5326,'2018-03-12 00:00:00.0000000',1,2),
 	 (5000,26000,0,3001,'2018-03-13 00:00:00.0000000',1,2),
 	 (5001,24000,0,5003,'2018-03-14 00:00:00.0000000',1,2),
-	 (0,29962,4001,0,'2018-03-15 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,29962,4001,0,'2018-03-15 00:00:00.0000000',1,2),
 	 (3001,30858,0,0,'2018-03-16 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2018-03-17 00:00:00.0000000',1,2),
 	 (12001,18003,0,4762,'2018-03-18 00:00:00.0000000',1,2),
@@ -1551,8 +1244,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,30002,3957,0,'2018-03-22 00:00:00.0000000',1,2),
 	 (16001,11900,3001,4500,'2018-03-23 00:00:00.0000000',1,2),
 	 (6001,25003,0,3000,'2018-03-24 00:00:00.0000000',1,2),
-	 (0,0,0,0,'2018-03-25 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,0,0,0,'2018-03-25 00:00:00.0000000',1,2),
 	 (7001,23005,3001,0,'2018-03-26 00:00:00.0000000',1,2),
 	 (4999,24001,0,4800,'2018-03-27 00:00:00.0000000',1,2),
 	 (11001,20003,0,3000,'2018-03-28 00:00:00.0000000',1,2),
@@ -1562,8 +1254,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,0,0,0,'2018-04-01 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2018-04-02 00:00:00.0000000',1,2),
 	 (6677,23953,4001,0,'2018-04-03 00:00:00.0000000',1,2),
-	 (4001,26928,0,3001,'2018-04-04 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (4001,26928,0,3001,'2018-04-04 00:00:00.0000000',1,2),
 	 (3001,29857,0,0,'2018-04-05 00:00:00.0000000',1,2),
 	 (3316,24502,0,6001,'2018-04-06 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2018-04-07 00:00:00.0000000',1,2),
@@ -1573,8 +1264,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (7001,21502,0,5002,'2018-04-11 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2018-04-12 00:00:00.0000000',1,2),
 	 (4556,24999,5000,0,'2018-04-13 00:00:00.0000000',1,2),
-	 (4001,26927,0,3002,'2018-04-14 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (4001,26927,0,3002,'2018-04-14 00:00:00.0000000',1,2),
 	 (9000,17002,0,8001,'2018-04-15 00:00:00.0000000',1,2),
 	 (6000,21001,7001,0,'2018-04-16 00:00:00.0000000',1,2),
 	 (6000,24005,0,3000,'2018-04-17 00:00:00.0000000',1,2),
@@ -1584,8 +1274,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,9001,0,0,'2018-04-21 00:00:00.0000000',1,2),
 	 (10501,21401,3002,0,'2018-04-22 00:00:00.0000000',1,2),
 	 (3000,30800,0,0,'2018-04-23 00:00:00.0000000',1,2),
-	 (6000,20003,3557,4942,'2018-04-24 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (6000,20003,3557,4942,'2018-04-24 00:00:00.0000000',1,2),
 	 (6001,25003,0,3138,'2018-04-25 00:00:00.0000000',1,2),
 	 (6999,24604,3000,0,'2018-04-26 00:00:00.0000000',1,2),
 	 (0,30001,0,3490,'2018-04-27 00:00:00.0000000',1,2),
@@ -1595,8 +1284,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,0,0,0,'2018-05-01 00:00:00.0000000',1,2),
 	 (12001,19704,0,3001,'2018-05-02 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2018-05-03 00:00:00.0000000',1,2),
-	 (6001,21001,3001,3799,'2018-05-04 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (6001,21001,3001,3799,'2018-05-04 00:00:00.0000000',1,2),
 	 (6000,19001,0,0,'2018-05-05 00:00:00.0000000',1,2),
 	 (0,9000,0,0,'2018-05-06 00:00:00.0000000',1,2),
 	 (9001,25000,0,0,'2018-05-07 00:00:00.0000000',1,2),
@@ -1606,8 +1294,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (4001,24500,0,5001,'2018-05-11 00:00:00.0000000',1,2),
 	 (5001,26003,0,3000,'2018-05-12 00:00:00.0000000',1,2),
 	 (9000,17998,5002,2999,'2018-05-13 00:00:00.0000000',1,2),
-	 (6001,25142,0,3001,'2018-05-14 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (6001,25142,0,3001,'2018-05-14 00:00:00.0000000',1,2),
 	 (3001,30804,0,0,'2018-05-15 00:00:00.0000000',1,2),
 	 (0,29003,5002,0,'2018-05-16 00:00:00.0000000',1,2),
 	 (5001,28001,0,0,'2018-05-17 00:00:00.0000000',1,2),
@@ -1617,8 +1304,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,0,0,0,'2018-05-21 00:00:00.0000000',1,2),
 	 (8437,26003,0,0,'2018-05-22 00:00:00.0000000',1,2),
 	 (0,27002,0,6456,'2018-05-23 00:00:00.0000000',1,2),
-	 (6197,27003,0,0,'2018-05-24 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (6197,27003,0,0,'2018-05-24 00:00:00.0000000',1,2),
 	 (5555,25004,4000,0,'2018-05-25 00:00:00.0000000',1,2),
 	 (8901,25503,0,0,'2018-05-26 00:00:00.0000000',1,2),
 	 (9002,12001,5002,8900,'2018-05-27 00:00:00.0000000',1,2),
@@ -1628,8 +1314,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (6000,20301,3000,4442,'2018-05-31 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2018-06-01 00:00:00.0000000',1,2),
 	 (7001,24001,0,3243,'2018-06-02 00:00:00.0000000',1,2),
-	 (3999,11999,0,0,'2018-06-03 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (3999,11999,0,0,'2018-06-03 00:00:00.0000000',1,2),
 	 (9001,25499,0,0,'2018-06-04 00:00:00.0000000',1,2),
 	 (0,25002,4999,4001,'2018-06-05 00:00:00.0000000',1,2),
 	 (7000,27283,0,0,'2018-06-06 00:00:00.0000000',1,2),
@@ -1639,8 +1324,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (8999,21003,0,3999,'2018-06-10 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2018-06-11 00:00:00.0000000',1,2),
 	 (7001,27202,0,0,'2018-06-12 00:00:00.0000000',1,2),
-	 (7317,27001,0,0,'2018-06-13 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (7317,27001,0,0,'2018-06-13 00:00:00.0000000',1,2),
 	 (6197,28002,0,0,'2018-06-14 00:00:00.0000000',1,2),
 	 (3000,30802,0,0,'2018-06-15 00:00:00.0000000',1,2),
 	 (5001,26002,0,3001,'2018-06-16 00:00:00.0000000',1,2),
@@ -1650,8 +1334,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (3957,30005,0,0,'2018-06-20 00:00:00.0000000',1,2),
 	 (9002,25496,0,0,'2018-06-21 00:00:00.0000000',1,2),
 	 (7002,26501,0,0,'2018-06-22 00:00:00.0000000',1,2),
-	 (0,0,0,0,'2018-06-23 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,0,0,0,'2018-06-23 00:00:00.0000000',1,2),
 	 (11999,14006,3000,6004,'2018-06-24 00:00:00.0000000',1,2),
 	 (5000,20000,3001,5999,'2018-06-25 00:00:00.0000000',1,2),
 	 (5000,21002,3501,4000,'2018-06-26 00:00:00.0000000',1,2),
@@ -1661,8 +1344,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (4000,27284,3002,0,'2018-06-30 00:00:00.0000000',1,2),
 	 (12001,16001,0,5000,'2018-07-01 00:00:00.0000000',1,2),
 	 (4001,27283,3001,0,'2018-07-02 00:00:00.0000000',1,2),
-	 (5501,28622,0,0,'2018-07-03 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (5501,28622,0,0,'2018-07-03 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2018-07-04 00:00:00.0000000',1,2),
 	 (5000,26007,0,3001,'2018-07-05 00:00:00.0000000',1,2),
 	 (7000,24002,3677,0,'2018-07-06 00:00:00.0000000',1,2),
@@ -1672,8 +1354,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (6475,24999,3000,0,'2018-07-10 00:00:00.0000000',1,2),
 	 (5000,24111,0,4901,'2018-07-11 00:00:00.0000000',1,2),
 	 (4929,24099,0,4901,'2018-07-12 00:00:00.0000000',1,2),
-	 (5001,25940,0,3001,'2018-07-13 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (5001,25940,0,3001,'2018-07-13 00:00:00.0000000',1,2),
 	 (7001,23702,3001,0,'2018-07-14 00:00:00.0000000',1,2),
 	 (9001,20401,0,4444,'2018-07-15 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2018-07-16 00:00:00.0000000',1,2),
@@ -1683,8 +1364,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (5001,25901,0,3000,'2018-07-20 00:00:00.0000000',1,2),
 	 (6001,25297,3000,0,'2018-07-21 00:00:00.0000000',1,2),
 	 (12000,15001,0,5002,'2018-07-22 00:00:00.0000000',1,2),
-	 (0,0,0,0,'2018-07-23 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (0,0,0,0,'2018-07-23 00:00:00.0000000',1,2),
 	 (5500,25944,3000,0,'2018-07-24 00:00:00.0000000',1,2),
 	 (0,17854,0,0,'2018-07-25 00:00:00.0000000',1,2),
 	 (10001,20003,0,4000,'2018-07-26 00:00:00.0000000',1,2),
@@ -1694,8 +1374,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (6143,23801,0,4000,'2018-07-30 00:00:00.0000000',1,2),
 	 (0,16951,0,0,'2018-07-31 00:00:00.0000000',1,2),
 	 (9557,24779,0,0,'2018-08-01 00:00:00.0000000',1,2),
-	 (3889,24903,0,5002,'2018-08-02 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (3889,24903,0,5002,'2018-08-02 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2018-08-03 00:00:00.0000000',1,2),
 	 (9002,25002,0,0,'2018-08-04 00:00:00.0000000',1,2),
 	 (11796,22751,0,0,'2018-08-05 00:00:00.0000000',1,2),
@@ -1705,8 +1384,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (7001,22850,0,4232,'2018-08-09 00:00:00.0000000',1,2),
 	 (6999,23520,4001,0,'2018-08-10 00:00:00.0000000',1,2),
 	 (6799,24550,3001,0,'2018-08-11 00:00:00.0000000',1,2),
-	 (9000,15501,0,9761,'2018-08-12 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (9000,15501,0,9761,'2018-08-12 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2018-08-13 00:00:00.0000000',1,2),
 	 (6001,23980,0,4001,'2018-08-14 00:00:00.0000000',1,2),
 	 (5000,25799,3438,0,'2018-08-15 00:00:00.0000000',1,2),
@@ -1716,8 +1394,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (3898,16901,0,0,'2018-08-19 00:00:00.0000000',1,2),
 	 (7000,23001,0,4001,'2018-08-20 00:00:00.0000000',1,2),
 	 (7000,22621,5001,0,'2018-08-21 00:00:00.0000000',1,2),
-	 (5000,25003,0,3001,'2018-08-22 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (5000,25003,0,3001,'2018-08-22 00:00:00.0000000',1,2),
 	 (5001,25893,0,3000,'2018-08-23 00:00:00.0000000',1,2),
 	 (6000,25323,3000,0,'2018-08-24 00:00:00.0000000',1,2),
 	 (10000,18603,0,4001,'2018-08-25 00:00:00.0000000',1,2),
@@ -1727,8 +1404,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (5000,25751,0,3001,'2018-08-29 00:00:00.0000000',1,2),
 	 (7001,24004,0,3001,'2018-08-30 00:00:00.0000000',1,2),
 	 (6700,22999,4301,0,'2018-08-31 00:00:00.0000000',1,2),
-	 (5001,24902,0,3725,'2018-09-01 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (5001,24902,0,3725,'2018-09-01 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2018-09-02 00:00:00.0000000',1,2),
 	 (6000,24783,0,3099,'2018-09-03 00:00:00.0000000',1,2),
 	 (9001,21001,3501,0,'2018-09-04 00:00:00.0000000',1,2),
@@ -1738,8 +1414,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (5000,28768,0,0,'2018-09-08 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2018-09-09 00:00:00.0000000',1,2),
 	 (6001,24701,3001,0,'2018-09-10 00:00:00.0000000',1,2),
-	 (7001,27014,0,0,'2018-09-11 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (7001,27014,0,0,'2018-09-11 00:00:00.0000000',1,2),
 	 (7001,26370,0,0,'2018-09-12 00:00:00.0000000',1,2),
 	 (7001,23641,0,3366,'2018-09-13 00:00:00.0000000',1,2),
 	 (7411,26652,0,0,'2018-09-14 00:00:00.0000000',1,2),
@@ -1749,8 +1424,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (5001,25781,0,3001,'2018-09-18 00:00:00.0000000',1,2),
 	 (0,33256,0,0,'2018-09-19 00:00:00.0000000',1,2),
 	 (4300,26402,0,3001,'2018-09-20 00:00:00.0000000',1,2),
-	 (7001,24350,3000,0,'2018-09-21 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (7001,24350,3000,0,'2018-09-21 00:00:00.0000000',1,2),
 	 (3500,27153,0,3000,'2018-09-22 00:00:00.0000000',1,2),
 	 (9000,22502,3001,0,'2018-09-23 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2018-09-24 00:00:00.0000000',1,2),
@@ -1760,8 +1434,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (9001,23586,0,0,'2018-09-28 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2018-09-29 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2018-09-30 00:00:00.0000000',1,2),
-	 (6000,20301,3002,5001,'2018-10-01 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (6000,20301,3002,5001,'2018-10-01 00:00:00.0000000',1,2),
 	 (5001,25404,0,3001,'2018-10-02 00:00:00.0000000',1,2),
 	 (6000,24003,0,4002,'2018-10-03 00:00:00.0000000',1,2),
 	 (7000,24153,0,3001,'2018-10-04 00:00:00.0000000',1,2),
@@ -1771,8 +1444,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (8999,21213,4000,0,'2018-10-08 00:00:00.0000000',1,2),
 	 (14003,18003,0,3002,'2018-10-09 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2018-10-10 00:00:00.0000000',1,2),
-	 (5001,26003,3451,0,'2018-10-11 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (5001,26003,3451,0,'2018-10-11 00:00:00.0000000',1,2),
 	 (5801,27603,0,0,'2018-10-12 00:00:00.0000000',1,2),
 	 (0,0,0,0,'2018-10-13 00:00:00.0000000',1,2),
 	 (5000,20002,3001,5477,'2018-10-14 00:00:00.0000000',1,2),
@@ -1782,8 +1454,7 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (7000,24698,3001,0,'2018-10-18 00:00:00.0000000',1,2),
 	 (5001,25926,3001,0,'2018-10-19 00:00:00.0000000',1,2),
 	 (7001,26804,0,0,'2018-10-20 00:00:00.0000000',1,2),
-	 (9002,20005,5151,0,'2018-10-21 00:00:00.0000000',1,2);
-INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,DriverId,StationId) VALUES
+	 (9002,20005,5151,0,'2018-10-21 00:00:00.0000000',1,2),
 	 (6000,15503,0,12102,'2018-10-22 00:00:00.0000000',1,2),
 	 (5001,20303,3002,5478,'2018-10-23 00:00:00.0000000',1,2),
 	 (3701,30220,0,0,'2018-10-24 00:00:00.0000000',1,2),
@@ -1793,4 +1464,6 @@ INSERT INTO master.dbo.Deliveries (Pb95,Diesel,Pb98,TurboDiesel,DepartureTime,Dr
 	 (0,0,0,0,'2018-10-28 00:00:00.0000000',1,2),
 	 (6000,14905,5002,8806,'2018-10-29 00:00:00.0000000',1,2),
 	 (5001,29006,0,0,'2018-10-30 00:00:00.0000000',1,2),
-	 (5000,28593,0,0,'2018-10-31 00:00:00.0000000',1,2);
+	 (5000,28593,0,0,'2018-10-31 00:00:00.0000000',1,2);";
+    }
+}
