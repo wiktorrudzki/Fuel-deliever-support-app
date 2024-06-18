@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import FuelLevelCard from '@/components/FuelLevel';
+import { LoadingOverlay } from '@/components/LoadingOverlay';
 import { Table } from '@/components/Table';
 import { Card } from '@/components/card';
 import Station1chart from '@/components/charts/Station1chart';
@@ -32,9 +33,12 @@ const Panel: React.FC = () => {
     }
   });
 
-  const [getStation] = usePromise(getStationById, (response) => {
-    setStation(response.data);
-  });
+  const [getStation, isLoadingStation] = usePromise(
+    getStationById,
+    (response) => {
+      setStation(response.data);
+    }
+  );
 
   useEffect(() => {
     if (id !== undefined) {
@@ -48,7 +52,7 @@ const Panel: React.FC = () => {
     } else {
       console.error('Id is undefined');
     }
-  }, []);
+  }, [id]);
 
   const capacity95 = station?.currentFuelVolume?.pb95 ?? 0;
   const maxCapacity95 = station?.stationCapacity?.pb95 ?? 0;
@@ -116,53 +120,57 @@ const Panel: React.FC = () => {
   }
 
   return (
-    <div className="panel-container">
-      <div className="chart-info">
-        <Station1chart
-          percent95={percent95}
-          percent98={percent98}
-          percentDiesel={percentDiesel}
-          percentTurboDiesel={percentTurboDiesel}
-        />
-        <Card />
-      </div>
-      <div className="fuelLevel">
-        <FuelLevelCard
-          name="PB95"
-          capacity={capacity95}
-          maxCapacity={maxCapacity95}
-        />
-        <FuelLevelCard
-          name="PB98"
-          capacity={capacity98}
-          maxCapacity={maxCapacity98}
-        />
-        <FuelLevelCard
-          name="DIESEL"
-          capacity={capacityDiesel}
-          maxCapacity={maxCapacityDiesel}
-        />
-        <FuelLevelCard
-          name="TURBO D"
-          capacity={capacityTurboDiesel}
-          maxCapacity={maxCapacityTurboDiesel}
-        />
-      </div>
-      <h2 className="prediction-title">predykcje</h2>
-      <Table
-        columns={[
-          'data',
-          'godz.',
-          'id',
-          'pb95',
-          'pb98',
-          'diesel',
-          'turbo diesel',
-          'suma',
-        ]}
-        rows={rows}
-      />
-    </div>
+    <LoadingOverlay isLoading={isLoadingStation}>
+      {station && (
+        <div className="panel-container">
+          <div className="chart-info">
+            <Station1chart
+              percent95={percent95}
+              percent98={percent98}
+              percentDiesel={percentDiesel}
+              percentTurboDiesel={percentTurboDiesel}
+            />
+            <Card station={station} />
+          </div>
+          <div className="fuelLevel">
+            <FuelLevelCard
+              name="PB95"
+              capacity={capacity95}
+              maxCapacity={maxCapacity95}
+            />
+            <FuelLevelCard
+              name="PB98"
+              capacity={capacity98}
+              maxCapacity={maxCapacity98}
+            />
+            <FuelLevelCard
+              name="DIESEL"
+              capacity={capacityDiesel}
+              maxCapacity={maxCapacityDiesel}
+            />
+            <FuelLevelCard
+              name="TURBO D"
+              capacity={capacityTurboDiesel}
+              maxCapacity={maxCapacityTurboDiesel}
+            />
+          </div>
+          <h2 className="prediction-title">predykcje</h2>
+          <Table
+            columns={[
+              'data',
+              'godz.',
+              'id',
+              'pb95',
+              'pb98',
+              'diesel',
+              'turbo diesel',
+              'suma',
+            ]}
+            rows={rows}
+          />
+        </div>
+      )}
+    </LoadingOverlay>
   );
 };
 

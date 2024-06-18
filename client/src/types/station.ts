@@ -12,4 +12,8 @@ export type Station = {
   name: string;
   stationCapacity: FuelVolume;
   currentFuelVolume: FuelVolume;
+  owner: string;
+  mapURL: string;
+  phoneNumber: string;
+  address: string;
 };
