@@ -133,11 +133,11 @@ export default function AddDelivery() {
               'data',
               'godz.',
               'id',
-              'suma',
+              'TURBO DIESEL',
               'PB95',
               'PB98',
               'DIESEL',
-              'TURBO DIESEL',
+              'suma',
             ]}
             rows={mappedDeliveries}
           />
