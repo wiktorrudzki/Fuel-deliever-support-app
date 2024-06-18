@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 
+import { Box } from '@mui/material';
 import dayjs from 'dayjs';
 
 import MobileCalendar from '@/components/Calendar/MobileCalendar';
@@ -11,11 +12,12 @@ import './Calendar.css';
 
 export default function Calendar() {
   const [delivery, setDelivery] = useState<Delivery[]>([]);
+  console.log(delivery);
 
   const [getAllDeliveriesData] = usePromise(
     getAllDeliveries,
     ({ data }) => {
-      setDelivery(data); // Ustawienie wszystkich dostaw w stanie delivery
+      setDelivery(data);
     },
     (err) => {
       console.error(err);
@@ -30,9 +32,22 @@ export default function Calendar() {
   const highlightedDates = delivery.map((item) => dayjs(item.departureTime));
   return (
     <div className="all-calendar-container">
-      <h1> Terminarz</h1>
       <div style={{ marginTop: '40px' }}>
-        <MobileCalendar highlightedDates={highlightedDates} />
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+            padding: '40px',
+            borderRadius: '8px',
+            border: '1px solid #ccc',
+            flexDirection: 'column'
+          }}
+        >
+          <h1 style={{marginBottom: '40px'}}> Terminarz</h1>
+          <MobileCalendar highlightedDates={highlightedDates} />
+        </Box>
       </div>
     </div>
   );

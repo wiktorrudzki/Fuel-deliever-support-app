@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import FuelLevelCard from '@/components/FuelLevel';
 import { Table } from '@/components/Table';
 import { Card } from '@/components/card';
-import Station1chart from '@/components/charts/Station1chart';
+import Station1chart from '@/components/Charts/Station1chart';
 import { getPredictionById } from '@/dao/prediction';
 import { usePromise } from '@/hooks';
 
