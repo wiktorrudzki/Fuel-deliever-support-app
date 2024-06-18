@@ -41,7 +41,7 @@ const Panel: React.FC = () => {
       const parsedId = parseInt(id, 10);
       if (!isNaN(parsedId)) {
         getPredictions(parsedId);
-        getStation(id);
+        getStation(parsedId);
       } else {
         console.error(`Id: ${id} is not a valid number`);
       }

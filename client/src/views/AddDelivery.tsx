@@ -1,25 +1,42 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 
 import { Grid, Box, Typography } from '@mui/material';
+import dayjs from 'dayjs';
 
 import MobileCalendar from '@/components/Calendar/MobileCalendar';
-import { getDeliveryById } from '@/dao/delivery';
+import { LoadingOverlay } from '@/components/LoadingOverlay';
+import { getAllDeliveries } from '@/dao/delivery';
+import { getStationById } from '@/dao/station';
 import { EditDelivery } from '@/features/AddDelivery';
 import { usePromise } from '@/hooks';
+import { Delivery } from '@/types/delivery';
+import { Station } from '@/types/station';
 
 import { Table } from '../components/Table';
 
 export default function AddDelivery() {
   const params = useParams();
-  const deliveryId = params.id;
+  const stationId = params.id;
 
-  const backToDashboard = () => <Navigate to="/dashboard" />;
+  const [station, setStation] = useState<Station>();
+  const [deliveries, setDeliveries] = useState<Delivery[]>([]);
 
-  const [get] = usePromise(
-    getDeliveryById,
-    (data) => {
-      console.log(data);
+  const [get, isLoading] = usePromise(
+    getStationById,
+    ({ data }) => {
+      setStation(data);
+    },
+    (err) => {
+      console.error(err);
+      return backToDashboard();
+    }
+  );
+
+  const [getAllDeliveriesData] = usePromise(
+    getAllDeliveries,
+    ({ data }) => {
+      setDeliveries(data);
     },
     (err) => {
       console.error(err);
@@ -28,22 +45,55 @@ export default function AddDelivery() {
   );
 
   useEffect(() => {
-    if (deliveryId) {
-      get(deliveryId);
+    if (stationId && parseInt(stationId)) {
+      const parsedStationId = parseInt(stationId);
+
+      get(parsedStationId);
+      getAllDeliveriesData(parsedStationId);
     } else {
       backToDashboard();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [deliveryId]);
+  }, [stationId]);
 
-  if (!deliveryId) {
+  const backToDashboard = () => <Navigate to="/dashboard" />;
+
+  const mappedDeliveries = deliveries.map((item) => {
+    const departureTime = new Date(item.departureTime);
+    const date = departureTime.toLocaleDateString('pl-PL');
+    const time = departureTime.toLocaleTimeString('pl-PL', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+
+    return {
+      data: date,
+      'godz.': time,
+      id: item.id.toString(),
+      PB95: item.pb95,
+      PB98: item.pb98,
+      DIESEL: item.diesel,
+      'TURBO DIESEL': item.turboDiesel,
+      suma: item.pb95 + item.pb98 + item.diesel + item.turboDiesel,
+    };
+  });
+
+  if (!stationId) {
     return backToDashboard();
   }
+
+  console.log(deliveries);
+
+  const highlightedDates = deliveries
+    .filter((item) => item.stationId === station?.id)
+    .map((item) => dayjs(item.departureTime));
 
   return (
     <Box>
       <Grid container spacing={4}>
-        <EditDelivery id={parseInt(deliveryId)} />
+        <LoadingOverlay isLoading={isLoading}>
+          {station && <EditDelivery station={station} />}
+        </LoadingOverlay>
         <Grid item xs={12} md={4}>
           <Box
             sx={{
@@ -56,7 +106,7 @@ export default function AddDelivery() {
               border: '1px solid #ccc',
             }}
           >
-            <MobileCalendar />
+            <MobileCalendar highlightedDates={highlightedDates} />
           </Box>
         </Grid>
         <Grid
@@ -79,70 +129,17 @@ export default function AddDelivery() {
             delivery history
           </Typography>
           <Table
-            columns={
-              [
-                'data',
-                'godz.',
-                'id',
-                'suma',
-                'PB95',
-                'PB98',
-                'DIESEL',
-                'LPG',
-              ] as const
-            }
-            rows={[
-              {
-                data: '22.05.2024',
-                'godz.': '21:48',
-                id: '1',
-                suma: '22222 L',
-                PB95: '40003 L',
-                PB98: '443555 L',
-                DIESEL: '4355553 L',
-                LPG: '3532 L',
-              },
-              {
-                data: '22.05.2024',
-                'godz.': '21:48',
-                id: '2',
-                suma: '22222 L',
-                PB95: '40003 L',
-                PB98: '443555 L',
-                DIESEL: '4355553 L',
-                LPG: '3532 L',
-              },
-              {
-                data: '22.05.2024',
-                'godz.': '21:48',
-                id: '3',
-                suma: '22222 L',
-                PB95: '40003 L',
-                PB98: '443555 L',
-                DIESEL: '4355553 L',
-                LPG: '3532 L',
-              },
-              {
-                data: '22.05.2024',
-                'godz.': '21:48',
-                id: '2',
-                suma: '22222 L',
-                PB95: '40003 L',
-                PB98: '443555 L',
-                DIESEL: '4355553 L',
-                LPG: '3532 L',
-              },
-              {
-                data: '22.05.2024',
-                'godz.': '21:48',
-                id: '2',
-                suma: '22222 L',
-                PB95: '40003 L',
-                PB98: '443555 L',
-                DIESEL: '4355553 L',
-                LPG: '3532 L',
-              },
+            columns={[
+              'data',
+              'godz.',
+              'id',
+              'suma',
+              'PB95',
+              'PB98',
+              'DIESEL',
+              'TURBO DIESEL',
             ]}
+            rows={mappedDeliveries}
           />
         </Grid>
       </Grid>

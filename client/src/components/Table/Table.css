@@ -1,3 +1,10 @@
+.table-wrapper {
+  max-height: 200px;
+  overflow-y: auto;
+  border-bottom: 1px solid var(--grey);
+  border-radius: 10px;
+}
+
 table {
   --border: 1px solid var(--grey);
 
@@ -6,19 +13,25 @@ table {
   background-color: white;
 
   border-spacing: 0;
-  border-collapse: separate;
-  overflow: hidden;
+  border-collapse: collapse;
+
+  width: 100%;
 }
 
 th {
-  background-color: #2665D2;
+  background-color: #2665d2;
   color: white;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
 td,
 th {
   text-align: center;
   padding: 8px;
+  vertical-align: middle;
 }
 
 table tr:not(:last-child) > td,

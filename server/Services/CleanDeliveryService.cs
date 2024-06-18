@@ -34,11 +34,16 @@ public class CleanDeliveryService : ICleanDeliveryService
         return res.Entity;
     }
 
-    public async Task<List<DeliveryEntity>> GetAllAsync()
+    public async Task<List<DeliveryEntity>> GetAllAsync(int? stationId)
     {
-        var deliveries = await _dbContext.Deliveries
-            .AsNoTracking()
-            .ToListAsync();
+        var query = _dbContext.Deliveries.AsNoTracking();
+
+        if (stationId != null)
+        {
+            query = query.Where(d => d.StationId == stationId);
+        }
+
+        var deliveries = await query.OrderByDescending(d => d.DepartureTime).ToListAsync();
 
         return deliveries;
     }

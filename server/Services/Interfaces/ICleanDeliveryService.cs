@@ -6,7 +6,7 @@ namespace server.Services.Interfaces
     public interface ICleanDeliveryService
     {
         Task<DeliveryEntity> CreateAsync(CreateDeliveryDto dto);
-        Task<List<DeliveryEntity>> GetAllAsync();
+        Task<List<DeliveryEntity>> GetAllAsync(int? stationId);
         Task<DeliveryEntity> GetOneAsync(int id);
         Task<DeliveryEntity> UpdateAsync(int id, UpdateDeliveryDto dto);
         Task DeleteAsync(int id);
