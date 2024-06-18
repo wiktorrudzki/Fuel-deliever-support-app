@@ -92,7 +92,9 @@ export default function AddDelivery() {
     <Box>
       <Grid container spacing={4}>
         <LoadingOverlay isLoading={isLoading}>
-          {station && <EditDelivery station={station} />}
+          {station && (
+            <EditDelivery setDeliveries={setDeliveries} station={station} />
+          )}
         </LoadingOverlay>
         <Grid item xs={12} md={4}>
           <Box

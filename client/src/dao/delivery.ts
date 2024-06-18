@@ -14,4 +14,4 @@ export const getDeliveryById = (id: string) =>
   api.get(`/Delivery/GetDeliveryById?id=${id}`);
 
 export const createDelivery = (delivery: DeliveryCreate) =>
-  api.post('/Delivery', delivery);
+  api.post<Delivery>('/Delivery', delivery);

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
 
 import { Button, Grid } from '@mui/material';
 import { Formik } from 'formik';
@@ -10,7 +11,7 @@ import { getAllDrivers } from '@/dao/driver';
 import { getPredictionById } from '@/dao/prediction';
 import { formatDateTimeLocal } from '@/helpers';
 import { usePromise } from '@/hooks';
-import { DeliveryCreate } from '@/types/delivery';
+import { Delivery, DeliveryCreate } from '@/types/delivery';
 import { Driver } from '@/types/driver';
 import { Prediction, PredictionCreate } from '@/types/prediction';
 import { Station } from '@/types/station';
@@ -33,9 +34,10 @@ const buttonStyles = {
 
 type Props = {
   station: Station;
+  setDeliveries: React.Dispatch<React.SetStateAction<Delivery[]>>;
 };
 
-const EditDelivery = ({ station }: Props) => {
+const EditDelivery = ({ station, setDeliveries }: Props) => {
   const [prediction, setPrediction] = useState<Prediction | null>(null);
   const [drivers, setDrivers] = useState<Driver[]>([]);
 
@@ -47,9 +49,16 @@ const EditDelivery = ({ station }: Props) => {
   const [get, isLoadingGet] = usePromise(getPredictionById, ({ data }) =>
     setPrediction(data)
   );
-  const [create, isLoadingCreate] = usePromise(createDelivery, () => {
-    formRef.current.resetFields();
-  });
+  const [create, isLoadingCreate] = usePromise(
+    createDelivery,
+    ({ data }) => {
+      setDeliveries((prev) => prev.concat([data]));
+      toast.success('Pomyslnie zaplanowano dostawę');
+    },
+    () => {
+      toast.error('Wybrany kierowca w tym dniu jest już zajęty');
+    }
+  );
 
   const [getDrivers, isLoadingDrivers] = usePromise(
     getAllDrivers,
@@ -167,6 +176,7 @@ const EditDelivery = ({ station }: Props) => {
           </Formik>
         )}
       </LoadingOverlay>
+      <ToastContainer />
     </Grid>
   );
 };
