@@ -6,6 +6,7 @@ import Card from '@mui/material/Card';
 import './charts.css';
 
 interface Station1chartProps {
+  name: string;
   percent95: number;
   percent98: number;
   percentDiesel: number;
@@ -13,6 +14,7 @@ interface Station1chartProps {
 }
 
 const Station1chart: React.FC<Station1chartProps> = ({
+  name,
   percent95,
   percent98,
   percentDiesel,
@@ -90,7 +92,7 @@ const Station1chart: React.FC<Station1chartProps> = ({
   return (
     <Card className="card">
       <div className="card-title">
-        <p className="title">Stacja nr 1</p>
+        <p className="title">{name}</p>
       </div>
       <div className="charts-box">
         <div id="chart">

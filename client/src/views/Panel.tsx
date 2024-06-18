@@ -125,6 +125,7 @@ const Panel: React.FC = () => {
         <div className="panel-container">
           <div className="chart-info">
             <Station1chart
+              name={station.name}
               percent95={percent95}
               percent98={percent98}
               percentDiesel={percentDiesel}
