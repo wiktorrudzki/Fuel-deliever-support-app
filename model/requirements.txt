@@ -1,0 +1,5 @@
+pandas
+pymssql
+Flask
+flask-restx
+statsmodels

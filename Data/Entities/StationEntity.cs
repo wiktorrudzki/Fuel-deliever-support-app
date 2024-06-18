@@ -12,7 +12,7 @@ namespace Data.Entities
         public string Address { get; set; }
         public string MapURL { get; set; }
         public List<DeliveryEntity>? Deliveries { get; set; }
-        public DeliveryPredictionEntity? DeliveryPrediction { get; set; }
+        public List<DeliveryPredictionEntity>? DeliveryPrediction { get; set; }
         public StationCapacityEntity? StationCapacity { get; set; }
         public CurrentFuelVolumeEntity? CurrentFuelVolume { get; set; }
     }
