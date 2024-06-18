@@ -1,16 +1,28 @@
+import React from 'react';
 import ReactApexChart from 'react-apexcharts';
 
 import Card from '@mui/material/Card';
 
-// import { useState } from 'react';
 import './charts.css';
 
-export default function Station1chart() {
+interface Station1chartProps {
+  percent95: number;
+  percent98: number;
+  percentDiesel: number;
+  percentTurboDiesel: number;
+}
+
+const Station1chart: React.FC<Station1chartProps> = ({
+  percent95,
+  percent98,
+  percentDiesel,
+  percentTurboDiesel,
+}) => {
   const state = {
     series: [
       {
         name: 'Fuels',
-        data: [10, 30, 57, 20],
+        data: [percent95, percent98, percentDiesel, percentTurboDiesel],
       },
     ],
     options: {
@@ -21,7 +33,6 @@ export default function Station1chart() {
       plotOptions: {
         bar: {
           horizontal: false,
-          borederRadius: 10,
           columnWidth: '50%',
           endingShape: 'rounded',
           colors: {
@@ -33,11 +44,11 @@ export default function Station1chart() {
               },
               {
                 from: 20,
-                to: 50,
+                to: 60,
                 color: '#ECEC42',
               },
               {
-                from: 50,
+                from: 60,
                 to: 100,
                 color: '#008000',
               },
@@ -54,7 +65,7 @@ export default function Station1chart() {
         colors: ['transparent'],
       },
       xaxis: {
-        categories: ['Pb95', 'Pb98', 'DIESEL', 'LPG'],
+        categories: ['PB95', 'PB98', 'DIESEL', 'TURBO D'],
       },
       yaxis: {
         labels: {
@@ -116,4 +127,6 @@ export default function Station1chart() {
       </div>
     </Card>
   );
-}
+};
+
+export default Station1chart;

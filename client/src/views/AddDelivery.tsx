@@ -1,15 +1,13 @@
 import { useEffect } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 
-import { Grid, Box } from '@mui/material';
+import { Grid, Box, Typography } from '@mui/material';
 
-// import { styled } from '@mui/material/styles';
 import MobileCalendar from '@/components/Calendar/MobileCalendar';
 import { getDeliveryById } from '@/dao/delivery';
 import { EditDelivery } from '@/features/AddDelivery';
 import { usePromise } from '@/hooks';
 
-// import TableDetails from '@/components/tableDetails/TableDetails';
 import { Table } from '../components/Table';
 
 export default function AddDelivery() {
@@ -64,8 +62,22 @@ export default function AddDelivery() {
         <Grid
           item
           xs={12}
-          style={{ display: 'flex', justifyContent: 'center' }}
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+          }}
         >
+          <Typography
+            variant="h2"
+            sx={{
+              textTransform: 'uppercase',
+              fontSize: '24px',
+              fontWeight: 'bold',
+            }}
+          >
+            delivery history
+          </Typography>
           <Table
             columns={
               [
