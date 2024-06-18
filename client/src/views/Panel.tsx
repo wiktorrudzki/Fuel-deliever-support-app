@@ -28,7 +28,7 @@ const Panel: React.FC = () => {
     } else {
       console.error(
         'Expected an array or single prediction object, but received:',
-        response.data
+        response.data,
       );
     }
   });
@@ -37,7 +37,7 @@ const Panel: React.FC = () => {
     getStationById,
     (response) => {
       setStation(response.data);
-    }
+    },
   );
 
   useEffect(() => {
@@ -66,15 +66,14 @@ const Panel: React.FC = () => {
   const percent95 = parseFloat(((capacity95 / maxCapacity95) * 100).toFixed(2));
   const percent98 = parseFloat(((capacity98 / maxCapacity98) * 100).toFixed(2));
   const percentDiesel = parseFloat(
-    ((capacityDiesel / maxCapacityDiesel) * 100).toFixed(2)
+    ((capacityDiesel / maxCapacityDiesel) * 100).toFixed(2),
   );
   const percentTurboDiesel = parseFloat(
-    ((capacityTurboDiesel / maxCapacityTurboDiesel) * 100).toFixed(2)
+    ((capacityTurboDiesel / maxCapacityTurboDiesel) * 100).toFixed(2),
   );
 
   let rows: {
     data: string;
-    'godz.': string;
     id: string;
     pb95: string;
     pb98: string;
@@ -86,10 +85,6 @@ const Panel: React.FC = () => {
   if (predictions.length > 0) {
     rows = predictions.map((prediction) => ({
       data: prediction.departureTime.split('T')[0],
-      'godz.': new Date(prediction.departureTime).toLocaleTimeString('pl-PL', {
-        hour: '2-digit',
-        minute: '2-digit',
-      }),
       id: prediction.id.toString(),
       pb95: `${prediction.pb95} L`,
       pb98: `${prediction.pb98} L`,
@@ -102,13 +97,6 @@ const Panel: React.FC = () => {
     rows = [
       {
         data: prediction.departureTime.split('T')[0],
-        'godz.': new Date(prediction.departureTime).toLocaleTimeString(
-          'pl-PL',
-          {
-            hour: '2-digit',
-            minute: '2-digit',
-          }
-        ),
         id: prediction.id.toString(),
         pb95: `${prediction.pb95} L`,
         pb98: `${prediction.pb98} L`,
@@ -159,7 +147,6 @@ const Panel: React.FC = () => {
           <Table
             columns={[
               'data',
-              'godz.',
               'id',
               'pb95',
               'pb98',

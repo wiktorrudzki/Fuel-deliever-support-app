@@ -61,14 +61,9 @@ export default function AddDelivery() {
   const mappedDeliveries = deliveries.map((item) => {
     const departureTime = new Date(item.departureTime);
     const date = departureTime.toLocaleDateString('pl-PL');
-    const time = departureTime.toLocaleTimeString('pl-PL', {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
 
     return {
       data: date,
-      'godz.': time,
       id: item.id.toString(),
       PB95: item.pb95,
       PB98: item.pb98,
@@ -133,7 +128,6 @@ export default function AddDelivery() {
           <Table
             columns={[
               'data',
-              'godz.',
               'id',
               'TURBO DIESEL',
               'PB95',
