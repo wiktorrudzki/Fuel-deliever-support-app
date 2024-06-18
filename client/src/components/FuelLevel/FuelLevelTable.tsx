@@ -1,3 +1,5 @@
+import React from 'react';
+
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -7,18 +9,25 @@ import TableRow from '@mui/material/TableRow';
 
 import './fuelLevelCard.css';
 
-function createData(name: string, value: string) {
-  return { name, value };
+interface FuelLevelTableProps {
+  name: string;
+  capacity: number;
+  maxCapacity: number;
 }
 
-const rows = [
-  createData('NAZWA PALIWA:', 'PB95'),
-  createData('PRODUCENT PALIWA:', '42%'),
-  createData('ILOŚĆ PALIWA', '24002L'),
-  createData('MAX POJEMNOŚĆ', '40566L'),
-];
+const FuelLevelTable: React.FC<FuelLevelTableProps> = ({
+  name,
+  capacity,
+  maxCapacity,
+}) => {
+  const percent = ((capacity / maxCapacity) * 100).toFixed(2);
+  const rows = [
+    { name: 'NAZWA PALIWA', value: name },
+    { name: 'PROCENT PALIWA', value: `${percent}%` },
+    { name: 'ILOŚĆ PALIWA', value: `${capacity}L` },
+    { name: 'MAX POJEMNOŚĆ', value: `${maxCapacity}L` },
+  ];
 
-export default function FuelLevelTable() {
   return (
     <div className="table-level-container">
       <TableContainer component={Paper} className="tableContainer">
@@ -46,4 +55,6 @@ export default function FuelLevelTable() {
       </TableContainer>
     </div>
   );
-}
+};
+
+export default FuelLevelTable;
