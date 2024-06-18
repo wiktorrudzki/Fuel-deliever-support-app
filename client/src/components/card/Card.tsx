@@ -4,6 +4,10 @@ import mapIcon from './icons/map_icon.svg';
 import phoneIcon from './icons/phone_icon.svg';
 import './style.css';
 
+type Props = {
+
+}
+
 const Card = () => {
   return (
     <div className="card-container">
@@ -22,7 +26,6 @@ const Card = () => {
             <p className="content-text">
               ul. Adresowa nr 1, 00-000 Miasto, Państwo
             </p>
-            {/* <p className="content-text">00-000 Miasto, Państwo</p> */}
           </div>
         </div>
         <div className="map-field content-field">

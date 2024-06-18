@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 
-import { Grid, Box } from '@mui/material';
+import { Grid, Box, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 
 import MobileCalendar from '@/components/Calendar/MobileCalendar';
@@ -36,7 +36,7 @@ export default function AddDelivery() {
   const [getAllDeliveriesData] = usePromise(
     getAllDeliveries,
     ({ data }) => {
-      setDeliveries(data); // Ustawienie wszystkich dostaw w stanie delivery
+      setDeliveries(data);
     },
     (err) => {
       console.error(err);
@@ -112,8 +112,22 @@ export default function AddDelivery() {
         <Grid
           item
           xs={12}
-          style={{ display: 'flex', justifyContent: 'center' }}
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+          }}
         >
+          <Typography
+            variant="h2"
+            sx={{
+              textTransform: 'uppercase',
+              fontSize: '24px',
+              fontWeight: 'bold',
+            }}
+          >
+            delivery history
+          </Typography>
           <Table
             columns={[
               'data',

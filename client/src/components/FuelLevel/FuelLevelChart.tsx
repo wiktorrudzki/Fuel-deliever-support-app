@@ -1,8 +1,19 @@
+import React from 'react';
 import ReactApexChart from 'react-apexcharts';
 
 import { ApexOptions } from 'apexcharts';
 
-export default function FuelLevelChart() {
+interface FuelLevelChartProps {
+  capacity: number;
+  maxCapacity: number;
+}
+
+const FuelLevelChart: React.FC<FuelLevelChartProps> = ({
+  capacity,
+  maxCapacity,
+}) => {
+  const percent = parseFloat(((capacity / maxCapacity) * 100).toFixed(2));
+
   const options: ApexOptions = {
     chart: {
       type: 'bar',
@@ -26,11 +37,11 @@ export default function FuelLevelChart() {
             },
             {
               from: 20,
-              to: 50,
+              to: 60,
               color: '#ECEC42',
             },
             {
-              from: 50,
+              from: 60,
               to: 100,
               color: '#008000',
             },
@@ -70,8 +81,6 @@ export default function FuelLevelChart() {
     },
     stroke: {
       show: false,
-      // colors: ['black'],
-      // width: 4,
     },
     tooltip: {
       enabled: false,
@@ -81,7 +90,7 @@ export default function FuelLevelChart() {
   const series = [
     {
       name: 'Fuel Level',
-      data: [100],
+      data: [percent],
     },
   ];
 
@@ -105,4 +114,6 @@ export default function FuelLevelChart() {
       />
     </div>
   );
-}
+};
+
+export default FuelLevelChart;
