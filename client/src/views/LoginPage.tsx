@@ -54,11 +54,11 @@ const LoginPage = () => {
     },
     (error) => {
       console.error(error); //todo handle rejection
-    }
+    },
   );
 
   const handleMouseDownPassword = (
-    event: React.MouseEvent<HTMLButtonElement>
+    event: React.MouseEvent<HTMLButtonElement>,
   ) => {
     event.preventDefault();
   };
@@ -166,7 +166,6 @@ const LoginPage = () => {
                   type="submit"
                 />
               </div>
-              <p className="forgot-text">Zapomniałeś(-aś) hasła?</p>
             </main>
           </div>
         </form>

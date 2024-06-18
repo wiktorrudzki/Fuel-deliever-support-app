@@ -5,7 +5,6 @@ import FuelLevelCard from '@/components/FuelLevel';
 import { LoadingOverlay } from '@/components/LoadingOverlay';
 import { Table } from '@/components/Table';
 import { Card } from '@/components/card';
-import Station1chart from '@/components/Charts/Station1chart';
 import { getPredictionById } from '@/dao/prediction';
 import { getStationById } from '@/dao/station';
 import { usePromise } from '@/hooks';
@@ -13,6 +12,7 @@ import { Prediction } from '@/types/prediction';
 import { Station } from '@/types/station';
 
 import './Panel.css';
+import Station1chart from '@/components/charts/Station1chart';
 
 const Panel: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -28,7 +28,7 @@ const Panel: React.FC = () => {
     } else {
       console.error(
         'Expected an array or single prediction object, but received:',
-        response.data
+        response.data,
       );
     }
   });
@@ -37,7 +37,7 @@ const Panel: React.FC = () => {
     getStationById,
     (response) => {
       setStation(response.data);
-    }
+    },
   );
 
   useEffect(() => {
@@ -66,10 +66,10 @@ const Panel: React.FC = () => {
   const percent95 = parseFloat(((capacity95 / maxCapacity95) * 100).toFixed(2));
   const percent98 = parseFloat(((capacity98 / maxCapacity98) * 100).toFixed(2));
   const percentDiesel = parseFloat(
-    ((capacityDiesel / maxCapacityDiesel) * 100).toFixed(2)
+    ((capacityDiesel / maxCapacityDiesel) * 100).toFixed(2),
   );
   const percentTurboDiesel = parseFloat(
-    ((capacityTurboDiesel / maxCapacityTurboDiesel) * 100).toFixed(2)
+    ((capacityTurboDiesel / maxCapacityTurboDiesel) * 100).toFixed(2),
   );
 
   let rows: {
@@ -107,7 +107,7 @@ const Panel: React.FC = () => {
           {
             hour: '2-digit',
             minute: '2-digit',
-          }
+          },
         ),
         id: prediction.id.toString(),
         pb95: `${prediction.pb95} L`,
