@@ -10,9 +10,7 @@
     public class BackgroundTaskService : IHostedService, IDisposable
     {
         private Timer _timer;
-        private readonly CronExpression _cronExpression = CronExpression.Parse("0 23 * * *"); // Codziennie o północy (w utc to 22:00 - czas letni czy coś tam)
-        
-        
+        private readonly CronExpression _cronExpression = CronExpression.Parse("*/1 * * * *"); // Codziennie o północy (w utc to 22:00 - czas letni czy coś tam)
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
