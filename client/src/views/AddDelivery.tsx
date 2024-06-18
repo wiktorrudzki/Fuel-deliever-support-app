@@ -30,7 +30,7 @@ export default function AddDelivery() {
     (err) => {
       console.error(err);
       return backToDashboard();
-    }
+    },
   );
 
   const [getAllDeliveriesData] = usePromise(
@@ -41,7 +41,7 @@ export default function AddDelivery() {
     (err) => {
       console.error(err);
       return backToDashboard();
-    }
+    },
   );
 
   useEffect(() => {
@@ -128,18 +128,18 @@ export default function AddDelivery() {
               fontWeight: 'bold',
             }}
           >
-            delivery history
+            Historia dostaw
           </Typography>
           <Table
             columns={[
               'data',
               'godz.',
               'id',
-              'suma',
+              'TURBO DIESEL',
               'PB95',
               'PB98',
               'DIESEL',
-              'TURBO DIESEL',
+              'suma',
             ]}
             rows={mappedDeliveries}
           />

@@ -170,7 +170,6 @@ const LoginPage = () => {
                     type="submit"
                   />
                 </div>
-                <p className="forgot-text">Zapomniałeś(-aś) hasła?</p>
               </main>
             </div>
           </form>
