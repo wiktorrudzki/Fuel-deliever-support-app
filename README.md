@@ -18,5 +18,6 @@ Run model:
 
 ```console
 cd model
+pip install -r requirements.txt
 python app.py
 ```

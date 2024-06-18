@@ -82,18 +82,12 @@ namespace server.DailyPredictionClasses
             return raporty;
         }
 
-        
-        
-            
-            
-        
-
         public static async Task<List<Raport>> GetRaportsFromAPIAsync(int x)
         {
             using var httpClient = new HttpClient();
 
             // Tworzenie adresu URL z parametrem x
-            var url = $"http://127.0.0.1:5000/forecast/?steps={x}";
+            var url = $"http://127.0.0.1:5001/forecast/?steps={x}";
 
             var response = await httpClient.GetAsync(url);
             response.EnsureSuccessStatusCode();
